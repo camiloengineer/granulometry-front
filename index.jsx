@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { Activity, AlertTriangle, Beaker, ChevronDown, Clock, Download, Gauge, TrendingUp } from 'lucide-react';
+import { Activity, AlertTriangle, Beaker, ChevronDown, Clock, Download, Gauge, HelpCircle, TrendingUp } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
 import {
     Bar,
@@ -10,6 +10,7 @@ import {
     LineChart,
     ReferenceLine,
     ResponsiveContainer,
+    Tooltip,
     XAxis,
     YAxis
 } from 'recharts';
@@ -140,6 +141,13 @@ const Card = ({ title, icon, action, children, className = '' }) => (
     </div>
 );
 
+const AxisCaption = ({ yAxisLabel }) => (
+    <div className="text-xs text-slate-500 mt-3 space-y-1 px-1">
+        <div>Eje Y: {yAxisLabel}</div>
+        <div>Eje X: Tamaño (mm)</div>
+    </div>
+);
+
 
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
@@ -148,7 +156,12 @@ export default function DashboardGranulometria() {
     const [selectedFormula, setSelectedFormula] = useState('swebrec');
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
+    const [normalizeByBinWidth, setNormalizeByBinWidth] = useState(false);
+    const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
+    // alien: responsive viewport detection for histogram layout
+    const [viewportW, setViewportW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
     const dropdownRef = useRef(null);
+    const histogramTooltipRef = useRef(null);
 
     const formulas = {
         swebrec: {
@@ -167,10 +180,25 @@ export default function DashboardGranulometria() {
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
 
+    // alien: viewport detection with resize listener for responsive histogram
+    useEffect(() => {
+        const handleResize = () => {
+            setViewportW(window.innerWidth);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowFormulaDropdown(false);
+            }
+            if (histogramTooltipRef.current && !histogramTooltipRef.current.contains(event.target)) {
+                setShowHistogramTooltip(false);
             }
         };
 
@@ -180,13 +208,37 @@ export default function DashboardGranulometria() {
         };
     }, []);
 
-    const generateHistogramData = (buckets) => {
+    const generateHistogramData = (buckets, normalizeByBinWidth = false) => {
         const maxSize = 76.20;
-        const minSize = 0.0;
         const bucketWidth = maxSize / buckets;
         
-        // Generate realistic frequency distribution based on typical granulometric data
-        // Higher frequencies in the middle range (around 25.4-50.8 mm)
+        // alien: ensure curvaGran is monotonic non-decreasing in pct before interpolation
+        const sortedCurvaGran = [...curvaGran].sort((a, b) => a.size - b.size);
+        for (let i = 1; i < sortedCurvaGran.length; i++) {
+            sortedCurvaGran[i].pct = Math.max(sortedCurvaGran[i].pct, sortedCurvaGran[i-1].pct);
+        }
+        
+        // Function to interpolate % passing at a given size using linear interpolation
+        const interpolatePercentPassing = (targetSize) => {
+            // Find the two points in sortedCurvaGran that bracket targetSize
+            for (let i = 0; i < sortedCurvaGran.length - 1; i++) {
+                const point1 = sortedCurvaGran[i];
+                const point2 = sortedCurvaGran[i + 1];
+                
+                if (targetSize >= point1.size && targetSize <= point2.size) {
+                    // Linear interpolation
+                    const t = (targetSize - point1.size) / (point2.size - point1.size);
+                    return point1.pct + t * (point2.pct - point1.pct);
+                }
+            }
+            
+            // If targetSize is outside the range, return boundary values
+            if (targetSize <= sortedCurvaGran[0].size) return sortedCurvaGran[0].pct;
+            if (targetSize >= sortedCurvaGran[sortedCurvaGran.length - 1].size) return sortedCurvaGran[sortedCurvaGran.length - 1].pct;
+            
+            return 0;
+        };
+
         const histogramData = [];
 
         for (let i = 0; i < buckets; i++) {
@@ -194,27 +246,20 @@ export default function DashboardGranulometria() {
             const bucketEnd = (i + 1) * bucketWidth;
             const bucketCenter = bucketStart + bucketWidth / 2;
 
-            // Create a realistic frequency distribution that matches granulometric principles
-            // Peak frequency around 25.4-38.1 mm range, tapering off at extremes
-            let frequency = 0;
+            // Get % passing at start and end of bin
+            const pctStart = interpolatePercentPassing(bucketStart);
+            const pctEnd = interpolatePercentPassing(bucketEnd);
             
-            if (bucketCenter < 12.7) {
-                frequency = Math.max(0, Math.round(2 * bucketCenter / 12.7));
-            } else if (bucketCenter <= 25.4) {
-                frequency = Math.round(8 * (bucketCenter - 12.7) / 12.7 + 2);
-            } else if (bucketCenter <= 38.1) {
-                frequency = Math.round(12 - 4 * (bucketCenter - 25.4) / 12.7);
-            } else if (bucketCenter <= 50.8) {
-                frequency = Math.round(8 - 6 * (bucketCenter - 38.1) / 12.7);
+            // alien: removed Math.abs for correct calculation
+            const diffPct = pctEnd - pctStart;
+            let frequency;
+            
+            if (normalizeByBinWidth === false) {
+                // Frecuencia: en porcentaje del 0–100
+                frequency = diffPct;
             } else {
-                frequency = Math.max(0, Math.round(2 - 2 * (bucketCenter - 50.8) / 25.4));
-            }
-
-            // Add some variation for different bucket sizes
-            if (buckets === 5) {
-                frequency = Math.round(frequency * 1.5);
-            } else if (buckets === 20) {
-                frequency = Math.round(frequency * 0.8);
+                // Densidad: probabilidad por mm
+                frequency = (diffPct / 100) / bucketWidth;
             }
 
             histogramData.push({
@@ -227,7 +272,10 @@ export default function DashboardGranulometria() {
         return histogramData;
     };
 
-    const histogramData = generateHistogramData(bucketSize);
+    const histogramData = generateHistogramData(bucketSize, normalizeByBinWidth);
+    
+    // alien: responsive breakpoint for mobile layout
+    const isMobile = viewportW < 640;
 
     const generatePDF = (periodo = '30d') => {
         const doc = new jsPDF();
@@ -590,49 +638,102 @@ export default function DashboardGranulometria() {
                             </div>
                         </Card>
 
-                        <Card title="Histograma - Distribución no acumulativa (Frecuencia)"
+                        <Card title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
                             action={
-                                <div className="flex bg-slate-100 rounded-lg p-1">
+                                <div className="flex gap-2 items-center">
+                                    <div className="flex bg-slate-100 rounded-lg p-1">
+                                        <button
+                                            onClick={() => setBucketSize(5)}
+                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 5
+                                                ? 'bg-white text-slate-900 shadow-sm'
+                                                : 'text-slate-600 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            5 rangos
+                                        </button>
+                                        <button
+                                            onClick={() => setBucketSize(10)}
+                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 10
+                                                ? 'bg-white text-slate-900 shadow-sm'
+                                                : 'text-slate-600 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            10 rangos
+                                        </button>
+                                        <button
+                                            onClick={() => setBucketSize(20)}
+                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 20
+                                                ? 'bg-white text-slate-900 shadow-sm'
+                                                : 'text-slate-600 hover:text-slate-900'
+                                                }`}
+                                        >
+                                            20 rangos
+                                        </button>
+                                    </div>
                                     <button
-                                        onClick={() => setBucketSize(5)}
-                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 5
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:text-slate-900'
+                                        onClick={() => setNormalizeByBinWidth(!normalizeByBinWidth)}
+                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${normalizeByBinWidth
+                                            ? 'bg-blue-100 text-blue-900'
+                                            : 'bg-slate-100 text-slate-600 hover:text-slate-900'
                                             }`}
                                     >
-                                        5 buckets
+                                        {normalizeByBinWidth ? 'Densidad' : 'Frecuencia'}
                                     </button>
-                                    <button
-                                        onClick={() => setBucketSize(10)}
-                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 10
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        10 buckets
-                                    </button>
-                                    <button
-                                        onClick={() => setBucketSize(20)}
-                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 20
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        20 buckets
-                                    </button>
+                                    <div className="relative" ref={histogramTooltipRef}>
+                                        <button
+                                            onClick={() => setShowHistogramTooltip(!showHistogramTooltip)}
+                                            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors"
+                                            title="Información sobre el histograma"
+                                        >
+                                            <HelpCircle className="text-slate-600" size={14} />
+                                        </button>
+                                        {showHistogramTooltip && (
+                                            <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50">
+                                                <div className="text-sm space-y-2">
+                                                    <div className="font-medium text-slate-800">Modos del histograma</div>
+                                                    <div className="text-slate-600">
+                                                        <div>• <strong>Frecuencia (%):</strong> cuánta parte del material cae en cada rango. Suma 100%.</div>
+                                                        <div className="mt-1">• <strong>Densidad:</strong> lo mismo, pero ajustado para que el total se conserve aunque cambies la cantidad de rangos. El área total = 1.</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             }>
-                            <div className="h-48">
+                            <div className="h-72">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={histogramData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }} barCategoryGap={0}>
+                                    <BarChart 
+                                        data={histogramData} 
+                                        margin={{ 
+                                            top: 10, 
+                                            right: 20, 
+                                            bottom: 10, 
+                                            left: 16
+                                        }} 
+                                        barCategoryGap={0}
+                                    >
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
-                                        <YAxis />
+                                        <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} tickMargin={6} />
+                                        <YAxis
+                                            width={40}
+                                        />
+                                        <Tooltip 
+                                            formatter={(value) => [
+                                                normalizeByBinWidth 
+                                                    ? `${value.toFixed(3)}` 
+                                                    : `${value.toFixed(1)}%`,
+                                                // alien: tooltip shows units only in tooltip and legend
+                                                normalizeByBinWidth ? 'Densidad (1/mm)' : 'Frecuencia'
+                                            ]}
+                                            labelFormatter={(size) => `Tamaño: ${size} mm`}
+                                        />
                                         <Legend />
-                                        <Bar dataKey="frequency" name="Frecuencia" fill="#3b82f6" stroke="none" />
+                                        <Bar dataKey="frequency" name={normalizeByBinWidth ? 'Densidad' : 'Frecuencia (%)'} fill="#3b82f6" stroke="transparent" strokeWidth={0} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
+                            <AxisCaption yAxisLabel={normalizeByBinWidth ? 'Densidad (1/mm)' : 'Frecuencia (%)'} />
                         </Card>
 
                         <Card title={`Muestra ${currentPage} de 10`} icon={<AlertTriangle className="text-slate-500" size={18} />}>
@@ -812,7 +913,8 @@ export default function DashboardGranulometria() {
                                         <LineChart data={serieP80} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                             <CartesianGrid strokeDasharray="3 3" />
                                             <XAxis dataKey="hora" />
-                                            <YAxis domain={[0, 2.2]} />
+                                            {/* alien: fixed Y-axis domain to prevent line crushing */}
+                                            <YAxis domain={[0, 56]} />
                                             <Legend />
                                             <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                             <Line type="monotone" dataKey="p50" name="P50" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
