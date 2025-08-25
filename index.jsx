@@ -182,45 +182,39 @@ export default function DashboardGranulometria() {
 
     const generateHistogramData = (buckets) => {
         const maxSize = 3.0;
+        const minSize = 0.0;
+        const bucketWidth = maxSize / buckets;
         
-        // Predefined frequencies to avoid Math.random() causing re-renders
-        const predefinedFrequencies = {
-            5: [0, 0, 2, 8, 12, 6, 3],
-            10: [0, 0, 1, 2, 3, 8, 12, 9, 4, 2, 1, 0],
-            20: [0, 0, 0, 1, 1, 2, 3, 4, 6, 8, 10, 12, 9, 7, 5, 3, 2, 1, 1, 0, 0, 1, 0]
-        };
-
-        const frequencies = predefinedFrequencies[buckets] || [];
-        const totalBuckets = frequencies.length;
-        const bucketWidth = maxSize / totalBuckets;
+        // Generate realistic frequency distribution based on typical granulometric data
+        // Higher frequencies in the middle range (around 1.0-2.0 inches)
         const histogramData = [];
 
-        // Generate sample data based on a typical granulometric distribution
-        const sampleValues = [
-            0.063, 0.125, 0.18, 0.25, 0.35, 0.425, 0.5, 0.6, 0.7, 0.75,
-            0.85, 0.95, 1.0, 1.102, 1.18, 1.25, 1.35, 1.45, 1.5, 1.575,
-            1.65, 1.75, 1.85, 2.0, 2.15, 2.3, 2.5, 2.75
-        ];
-
-        for (let i = 0; i < totalBuckets; i++) {
+        for (let i = 0; i < buckets; i++) {
             const bucketStart = i * bucketWidth;
             const bucketEnd = (i + 1) * bucketWidth;
             const bucketCenter = bucketStart + bucketWidth / 2;
 
-            // Count how many sample values fall in this bucket
-            let count = 0;
-            sampleValues.forEach(value => {
-                if (value >= bucketStart && value < bucketEnd) {
-                    count++;
-                }
-            });
-
-            // Use predefined frequency if available, otherwise use count
-            let frequency = frequencies[i] !== undefined ? frequencies[i] : count;
+            // Create a realistic frequency distribution that matches granulometric principles
+            // Peak frequency around 1.0-1.5 inch range, tapering off at extremes
+            let frequency = 0;
             
-            // Ensure minimum frequency for realistic distribution
-            if (frequency === 0 && bucketCenter > 0.5 && bucketCenter < 2.5) {
-                frequency = 1;
+            if (bucketCenter < 0.5) {
+                frequency = Math.max(0, Math.round(2 * bucketCenter / 0.5));
+            } else if (bucketCenter <= 1.0) {
+                frequency = Math.round(8 * (bucketCenter - 0.5) / 0.5 + 2);
+            } else if (bucketCenter <= 1.5) {
+                frequency = Math.round(12 - 4 * (bucketCenter - 1.0) / 0.5);
+            } else if (bucketCenter <= 2.0) {
+                frequency = Math.round(8 - 6 * (bucketCenter - 1.5) / 0.5);
+            } else {
+                frequency = Math.max(0, Math.round(2 - 2 * (bucketCenter - 2.0) / 1.0));
+            }
+
+            // Add some variation for different bucket sizes
+            if (buckets === 5) {
+                frequency = Math.round(frequency * 1.5);
+            } else if (buckets === 20) {
+                frequency = Math.round(frequency * 0.8);
             }
 
             histogramData.push({
@@ -230,12 +224,7 @@ export default function DashboardGranulometria() {
             });
         }
 
-        // Filter out initial buckets with zero frequency to align with the curve start
-        const firstNonZeroIndex = histogramData.findIndex(bucket => bucket.frequency > 0);
-        const filteredData = firstNonZeroIndex > 0 ? histogramData.slice(firstNonZeroIndex) : histogramData;
-        
-        // Return exactly the number of buckets requested
-        return filteredData.slice(0, buckets);
+        return histogramData;
     };
 
     const histogramData = generateHistogramData(bucketSize);
@@ -635,12 +624,12 @@ export default function DashboardGranulometria() {
                             }>
                             <div className="h-48">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={histogramData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
+                                    <BarChart data={histogramData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }} barCategoryGap={0}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis dataKey="size" type="number" domain={[0, 3.0]} tickFormatter={(v) => `${v.toFixed(2)} in`} />
                                         <YAxis />
                                         <Legend />
-                                        <Bar dataKey="frequency" name="Frecuencia" fill="#3b82f6" />
+                                        <Bar dataKey="frequency" name="Frecuencia" fill="#3b82f6" stroke="none" />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
