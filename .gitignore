@@ -1,0 +1,74 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/host-front/dist
+/host-front/public
+/uncrushable-front/dist
+/tmp
+/out-tsc
+/bazel-out
+.firebase
+
+# Node
+node_modules/
+*/node_modules
+/host-front/node_modules
+/uncrushable-front/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# AI Development Tools (not part of official project)
+CLAUDE.md
+
+# Allow GitHub workflows and instructions
+!.github/
+!.github/instructions/
+
+# Visual Studio Code
+.vscode/
+# Ignore all settings files by default
+.vscode/*
+# But keep these specific ones in the repository for team consistency
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+
+# Miscellaneous
+/.angular/
+/host-front/.angular/
+/uncrushable-front/.angular/
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# Firebase
+.firebase/
+.firebaserc
+
+# System files
+.DS_Store
+Thumbs.db
+
+*.log
+debug-storybook.log
+storybook-static
+
+# Compiled styles for Storybook
+.storybook/styles.css
+.storybook/styles.css.map
