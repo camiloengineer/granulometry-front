@@ -17,24 +17,24 @@ import {
 // ===== Mock data (maqueta) =====
 const resumen = {
     ult30d: {
-        p80: { valor: 1.68, unidad: 'in' },
-        p50: { valor: 1.14, unidad: 'in' }
+        p80: { valor: 42.67, unidad: 'mm' },
+        p50: { valor: 28.96, unidad: 'mm' }
     },
     ult7d: {
-        p80: { valor: 1.72, unidad: 'in' },
-        p50: { valor: 1.16, unidad: 'in' }
+        p80: { valor: 43.69, unidad: 'mm' },
+        p50: { valor: 29.46, unidad: 'mm' }
     },
     ult24h: {
-        p80: { valor: 1.71, unidad: 'in' },
-        p50: { valor: 1.15, unidad: 'in' }
+        p80: { valor: 43.43, unidad: 'mm' },
+        p50: { valor: 29.21, unidad: 'mm' }
     }
 };
 
 const kpis = {
-    p80Actual: 1.71,
-    p80Meta: 1.70,
-    p50Actual: 1.15,
-    p50Meta: 1.12,
+    p80Actual: 43.43,
+    p80Meta: 43.18,
+    p50Actual: 29.21,
+    p50Meta: 28.45,
     deteccionOversize: 97,
     falsosPositivos: 3,
     disponibilidad: 97,
@@ -45,75 +45,75 @@ const kpis = {
 
 
 const serieP80 = [
-    { hora: '09:00', p80: 1.65, p50: 1.10 },
-    { hora: '09:30', p80: 1.67, p50: 1.11 },
-    { hora: '10:00', p80: 1.70, p50: 1.13 },
-    { hora: '10:30', p80: 1.66, p50: 1.09 },
-    { hora: '11:00', p80: 1.64, p50: 1.08 },
-    { hora: '11:30', p80: 1.69, p50: 1.14 },
-    { hora: '12:00', p80: 1.68, p50: 1.12 },
-    { hora: '12:30', p80: 1.71, p50: 1.16 },
-    { hora: '13:00', p80: 1.72, p50: 1.15 },
-    { hora: '13:30', p80: 1.74, p50: 1.17 },
-    { hora: '14:00', p80: 1.75, p50: 1.18 },
-    { hora: '14:30', p80: 1.73, p50: 1.16 },
-    { hora: '15:00', p80: 1.69, p50: 1.13 },
-    { hora: '15:30', p80: 1.67, p50: 1.11 },
-    { hora: '16:00', p80: 1.70, p50: 1.14 },
-    { hora: '16:30', p80: 1.72, p50: 1.15 },
-    { hora: '17:00', p80: 1.68, p50: 1.12 }
+    { hora: '09:00', p80: 41.91, p50: 27.94 },
+    { hora: '09:30', p80: 42.42, p50: 28.19 },
+    { hora: '10:00', p80: 43.18, p50: 28.70 },
+    { hora: '10:30', p80: 42.16, p50: 27.69 },
+    { hora: '11:00', p80: 41.66, p50: 27.43 },
+    { hora: '11:30', p80: 42.93, p50: 28.96 },
+    { hora: '12:00', p80: 42.67, p50: 28.45 },
+    { hora: '12:30', p80: 43.43, p50: 29.46 },
+    { hora: '13:00', p80: 43.69, p50: 29.21 },
+    { hora: '13:30', p80: 44.20, p50: 29.72 },
+    { hora: '14:00', p80: 44.45, p50: 29.97 },
+    { hora: '14:30', p80: 43.94, p50: 29.46 },
+    { hora: '15:00', p80: 42.93, p50: 28.70 },
+    { hora: '15:30', p80: 42.42, p50: 28.19 },
+    { hora: '16:00', p80: 43.18, p50: 28.96 },
+    { hora: '16:30', p80: 43.69, p50: 29.21 },
+    { hora: '17:00', p80: 42.67, p50: 28.45 }
 ];
 
 
-// Curva granulométrica (maqueta): tamaño (in) vs % acumulado
+// Curva granulométrica (maqueta): tamaño (mm) vs % acumulado
 // Nota: en un caso real, el eje X suele usarse en escala log, aquí lo mostramos simple para la maqueta.
 const curvaGran = [
     { size: 0, pct: 0, p80: null, p50: null },
-    { size: 0.063, pct: 2, p80: null, p50: null },
-    { size: 0.125, pct: 5, p80: null, p50: null },
-    { size: 0.18, pct: 12, p80: null, p50: null },
-    { size: 0.25, pct: 18, p80: null, p50: null },
-    { size: 0.35, pct: 26, p80: null, p50: null },
-    { size: 0.425, pct: 32, p80: null, p50: null },
-    { size: 0.5, pct: 37, p80: null, p50: null },
-    { size: 0.6, pct: 43, p80: null, p50: null },
-    { size: 0.7, pct: 48, p80: null, p50: null },
-    { size: 0.75, pct: 55, p80: null, p50: null },
-    { size: 0.85, pct: 62, p80: null, p50: null },
-    { size: 0.95, pct: 67, p80: null, p50: null },
-    { size: 1.0, pct: 70, p80: null, p50: null },
-    { size: 1.102, pct: 50, p80: null, p50: 50 },
-    { size: 1.18, pct: 76, p80: null, p50: null },
-    { size: 1.25, pct: 79, p80: null, p50: null },
-    { size: 1.35, pct: 82, p80: null, p50: null },
-    { size: 1.45, pct: 84, p80: null, p50: null },
-    { size: 1.5, pct: 86, p80: null, p50: null },
-    { size: 1.575, pct: 80, p80: 80, p50: null },
-    { size: 1.65, pct: 88, p80: null, p50: null },
-    { size: 1.75, pct: 92, p80: null, p50: null },
-    { size: 1.85, pct: 94, p80: null, p50: null },
-    { size: 2.0, pct: 96, p80: null, p50: null },
-    { size: 2.15, pct: 97, p80: null, p50: null },
-    { size: 2.3, pct: 98, p80: null, p50: null },
-    { size: 2.5, pct: 99, p80: null, p50: null },
-    { size: 2.75, pct: 99.5, p80: null, p50: null },
-    { size: 3.0, pct: 100, p80: null, p50: null }
+    { size: 1.60, pct: 2, p80: null, p50: null },
+    { size: 3.18, pct: 5, p80: null, p50: null },
+    { size: 4.57, pct: 12, p80: null, p50: null },
+    { size: 6.35, pct: 18, p80: null, p50: null },
+    { size: 8.89, pct: 26, p80: null, p50: null },
+    { size: 10.80, pct: 32, p80: null, p50: null },
+    { size: 12.70, pct: 37, p80: null, p50: null },
+    { size: 15.24, pct: 43, p80: null, p50: null },
+    { size: 17.78, pct: 48, p80: null, p50: null },
+    { size: 19.05, pct: 55, p80: null, p50: null },
+    { size: 21.59, pct: 62, p80: null, p50: null },
+    { size: 24.13, pct: 67, p80: null, p50: null },
+    { size: 25.40, pct: 70, p80: null, p50: null },
+    { size: 27.99, pct: 50, p80: null, p50: 50 },
+    { size: 29.97, pct: 76, p80: null, p50: null },
+    { size: 31.75, pct: 79, p80: null, p50: null },
+    { size: 34.29, pct: 82, p80: null, p50: null },
+    { size: 36.83, pct: 84, p80: null, p50: null },
+    { size: 38.10, pct: 86, p80: null, p50: null },
+    { size: 40.01, pct: 80, p80: 80, p50: null },
+    { size: 41.91, pct: 88, p80: null, p50: null },
+    { size: 44.45, pct: 92, p80: null, p50: null },
+    { size: 46.99, pct: 94, p80: null, p50: null },
+    { size: 50.80, pct: 96, p80: null, p50: null },
+    { size: 54.61, pct: 97, p80: null, p50: null },
+    { size: 58.42, pct: 98, p80: null, p50: null },
+    { size: 63.50, pct: 99, p80: null, p50: null },
+    { size: 69.85, pct: 99.5, p80: null, p50: null },
+    { size: 76.20, pct: 100, p80: null, p50: null }
 ];
 
 
 
 // Últimas 10 muestras (maqueta) - datos estáticos para evitar re-renders
 const ultimasMuestras = [
-    { id: 1, fecha: '2025-09-29 10:00', p80: '1.82', imagen: '' },
-    { id: 2, fecha: '2025-09-29 11:00', p80: '1.75', imagen: '' },
-    { id: 3, fecha: '2025-09-29 12:00', p80: '1.69', imagen: '' },
-    { id: 4, fecha: '2025-09-29 13:00', p80: '1.91', imagen: '' },
-    { id: 5, fecha: '2025-09-24 14:00', p80: '1.73', imagen: '' },
-    { id: 6, fecha: '2025-09-24 15:00', p80: '1.88', imagen: '' },
-    { id: 7, fecha: '2025-09-24 16:00', p80: '1.77', imagen: '' },
-    { id: 8, fecha: '2025-09-24 17:00', p80: '1.84', imagen: '' },
-    { id: 9, fecha: '2025-09-29 18:00', p80: '1.71', imagen: '' },
-    { id: 10, fecha: '2025-09-29 19:00', p80: '1.93', imagen: '' }
+    { id: 1, fecha: '2025-09-29 10:00', p80: '46.23', imagen: '' },
+    { id: 2, fecha: '2025-09-29 11:00', p80: '44.45', imagen: '' },
+    { id: 3, fecha: '2025-09-29 12:00', p80: '42.93', imagen: '' },
+    { id: 4, fecha: '2025-09-29 13:00', p80: '48.51', imagen: '' },
+    { id: 5, fecha: '2025-09-24 14:00', p80: '43.94', imagen: '' },
+    { id: 6, fecha: '2025-09-24 15:00', p80: '47.75', imagen: '' },
+    { id: 7, fecha: '2025-09-24 16:00', p80: '44.96', imagen: '' },
+    { id: 8, fecha: '2025-09-24 17:00', p80: '46.74', imagen: '' },
+    { id: 9, fecha: '2025-09-29 18:00', p80: '43.43', imagen: '' },
+    { id: 10, fecha: '2025-09-29 19:00', p80: '49.02', imagen: '' }
 ];
 
 // ===== UI helpers =====
@@ -181,12 +181,12 @@ export default function DashboardGranulometria() {
     }, []);
 
     const generateHistogramData = (buckets) => {
-        const maxSize = 3.0;
+        const maxSize = 76.20;
         const minSize = 0.0;
         const bucketWidth = maxSize / buckets;
         
         // Generate realistic frequency distribution based on typical granulometric data
-        // Higher frequencies in the middle range (around 1.0-2.0 inches)
+        // Higher frequencies in the middle range (around 25.4-50.8 mm)
         const histogramData = [];
 
         for (let i = 0; i < buckets; i++) {
@@ -195,19 +195,19 @@ export default function DashboardGranulometria() {
             const bucketCenter = bucketStart + bucketWidth / 2;
 
             // Create a realistic frequency distribution that matches granulometric principles
-            // Peak frequency around 1.0-1.5 inch range, tapering off at extremes
+            // Peak frequency around 25.4-38.1 mm range, tapering off at extremes
             let frequency = 0;
             
-            if (bucketCenter < 0.5) {
-                frequency = Math.max(0, Math.round(2 * bucketCenter / 0.5));
-            } else if (bucketCenter <= 1.0) {
-                frequency = Math.round(8 * (bucketCenter - 0.5) / 0.5 + 2);
-            } else if (bucketCenter <= 1.5) {
-                frequency = Math.round(12 - 4 * (bucketCenter - 1.0) / 0.5);
-            } else if (bucketCenter <= 2.0) {
-                frequency = Math.round(8 - 6 * (bucketCenter - 1.5) / 0.5);
+            if (bucketCenter < 12.7) {
+                frequency = Math.max(0, Math.round(2 * bucketCenter / 12.7));
+            } else if (bucketCenter <= 25.4) {
+                frequency = Math.round(8 * (bucketCenter - 12.7) / 12.7 + 2);
+            } else if (bucketCenter <= 38.1) {
+                frequency = Math.round(12 - 4 * (bucketCenter - 25.4) / 12.7);
+            } else if (bucketCenter <= 50.8) {
+                frequency = Math.round(8 - 6 * (bucketCenter - 38.1) / 12.7);
             } else {
-                frequency = Math.max(0, Math.round(2 - 2 * (bucketCenter - 2.0) / 1.0));
+                frequency = Math.max(0, Math.round(2 - 2 * (bucketCenter - 50.8) / 25.4));
             }
 
             // Add some variation for different bucket sizes
@@ -281,9 +281,9 @@ export default function DashboardGranulometria() {
         yPosition += 8;
         doc.text(`• P50 promedio: ${datosResumen.p50.valor} ${datosResumen.p50.unidad}`, 25, yPosition);
         yPosition += 8;
-        doc.text(`• Última medición P80: ${kpis.p80Actual.toFixed(2)} in`, 25, yPosition);
+        doc.text(`• Última medición P80: ${kpis.p80Actual.toFixed(2)} mm`, 25, yPosition);
         yPosition += 8;
-        doc.text(`• Última medición P50: ${kpis.p50Actual.toFixed(2)} in`, 25, yPosition);
+        doc.text(`• Última medición P50: ${kpis.p50Actual.toFixed(2)} mm`, 25, yPosition);
         yPosition += 15;
 
         doc.setFontSize(16);
@@ -313,25 +313,25 @@ export default function DashboardGranulometria() {
         yPosition += 10;
 
         const percentiles = [
-            ['P100', '2.953'],
-            ['P90', '1.850'],
-            ['P80', '1.575'],
-            ['P70', '1.417'],
-            ['P60', '1.260'],
-            ['P50', '1.102'],
-            ['P40', '0.984'],
-            ['P30', '0.827'],
-            ['P20', '0.630'],
-            ['P10', '0.433']
+            ['P100', '75.0'],
+            ['P90', '47.0'],
+            ['P80', '40.0'],
+            ['P70', '36.0'],
+            ['P60', '32.0'],
+            ['P50', '28.0'],
+            ['P40', '25.0'],
+            ['P30', '21.0'],
+            ['P20', '16.0'],
+            ['P10', '11.0']
         ];
 
         let xCol1 = 30, xCol2 = 80, xCol3 = 130, xCol4 = 180;
 
         doc.setFont('helvetica', 'bold');
         doc.text('Percentil', xCol1, yPosition);
-        doc.text('Valor (in)', xCol2, yPosition);
+        doc.text('Valor (mm)', xCol2, yPosition);
         doc.text('Percentil', xCol3, yPosition);
-        doc.text('Valor (in)', xCol4, yPosition);
+        doc.text('Valor (mm)', xCol4, yPosition);
         yPosition += 8;
 
         doc.setFont('helvetica', 'normal');
@@ -477,8 +477,8 @@ export default function DashboardGranulometria() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <Card title="Última medicion" icon={<Gauge className="text-slate-500" size={18} />}>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P80</span><Badge tone={estadoP80}>{kpis.p80Actual.toFixed(2)} in</Badge></div>
-                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P50</span><Badge tone="info">{kpis.p50Actual.toFixed(2)} in</Badge></div>
+                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P80</span><Badge tone={estadoP80}>{kpis.p80Actual.toFixed(2)} mm</Badge></div>
+                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P50</span><Badge tone="info">{kpis.p50Actual.toFixed(2)} mm</Badge></div>
                                 </div>
                             </Card>
                             <Card title="Últimos 30 días" icon={<Activity className="text-slate-500" size={18} />}>
@@ -564,7 +564,7 @@ export default function DashboardGranulometria() {
                                     <LineChart data={serieP80}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis dataKey="hora" />
-                                        <YAxis domain={[0, 2.2]} />
+                                        <YAxis domain={[0, 55.9]} />
                                         <Legend />
                                         {/* <ReferenceArea y1={1.9} y2={2.2} fill="#ef4444" fillOpacity={0.12} label={{ value: 'Grande', position: 'insideTop' }} /> */}
                                         <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
@@ -579,7 +579,7 @@ export default function DashboardGranulometria() {
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="size" type="number" domain={[0, 3.0]} tickFormatter={(v) => `${v.toFixed(2)} in`} />
+                                        <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                         <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                                         <Legend />
                                         <Line type="monotone" dataKey="pct" name="Curva granulométrica" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
@@ -626,7 +626,7 @@ export default function DashboardGranulometria() {
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={histogramData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }} barCategoryGap={0}>
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="size" type="number" domain={[0, 3.0]} tickFormatter={(v) => `${v.toFixed(2)} in`} />
+                                        <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                         <YAxis />
                                         <Legend />
                                         <Bar dataKey="frequency" name="Frecuencia" fill="#3b82f6" stroke="none" />
@@ -645,7 +645,7 @@ export default function DashboardGranulometria() {
                                     <div className="p-4 text-sm">
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-500 text-xs">{ultimasMuestras[currentPage - 1]?.fecha}</span>
-                                            <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} in</Badge>
+                                            <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} mm</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -738,49 +738,49 @@ export default function DashboardGranulometria() {
                                             <thead>
                                                 <tr className="text-left text-slate-600 border-b">
                                                     <th className="py-2 pr-4">Percent Passing</th>
-                                                    <th className="py-2">Value (in)</th>
+                                                    <th className="py-2">Value (mm)</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P100</td>
-                                                    <td className="py-2 text-slate-700">2.953</td>
+                                                    <td className="py-2 text-slate-700">75.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P90</td>
-                                                    <td className="py-2 text-slate-700">1.850</td>
+                                                    <td className="py-2 text-slate-700">47.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P80</td>
-                                                    <td className="py-2 text-slate-700">1.575</td>
+                                                    <td className="py-2 text-slate-700">40.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P70</td>
-                                                    <td className="py-2 text-slate-700">1.417</td>
+                                                    <td className="py-2 text-slate-700">36.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P60</td>
-                                                    <td className="py-2 text-slate-700">1.260</td>
+                                                    <td className="py-2 text-slate-700">32.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P50</td>
-                                                    <td className="py-2 text-slate-700">1.102</td>
+                                                    <td className="py-2 text-slate-700">28.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P40</td>
-                                                    <td className="py-2 text-slate-700">0.984</td>
+                                                    <td className="py-2 text-slate-700">25.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P30</td>
-                                                    <td className="py-2 text-slate-700">0.827</td>
+                                                    <td className="py-2 text-slate-700">21.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P20</td>
-                                                    <td className="py-2 text-slate-700">0.630</td>
+                                                    <td className="py-2 text-slate-700">16.0</td>
                                                 </tr>
                                                 <tr>
                                                     <td className="py-2 pr-4 text-slate-700">P10</td>
-                                                    <td className="py-2 text-slate-700">0.433</td>
+                                                    <td className="py-2 text-slate-700">11.0</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -792,7 +792,7 @@ export default function DashboardGranulometria() {
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                                     <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis dataKey="size" type="number" domain={[0, 3.0]} tickFormatter={(v) => `${v.toFixed(2)} in`} />
+                                                    <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                                     <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                                                     <Legend />
                                                     <Line type="monotone" dataKey="pct" name="Curva granulométrica" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
@@ -838,7 +838,7 @@ export default function DashboardGranulometria() {
                                             <div className="p-4 text-sm">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-500 text-xs">{ultimasMuestras[currentPage - 1]?.fecha}</span>
-                                                    <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} in</Badge>
+                                                    <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} mm</Badge>
                                                 </div>
                                             </div>
                                         </div>
@@ -884,7 +884,7 @@ export default function DashboardGranulometria() {
                                             <ResponsiveContainer width="100%" height="100%">
                                                 <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                                     <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis dataKey="size" type="number" domain={[0, 3.0]} tickFormatter={(v) => `${v.toFixed(2)} in`} />
+                                                    <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                                     <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                                                     <Legend />
                                                     <Line type="monotone" dataKey="pct" name="Curva granulométrica" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
@@ -896,49 +896,49 @@ export default function DashboardGranulometria() {
                                             <thead>
                                                 <tr className="text-left text-slate-600 border-b">
                                                     <th className="py-2 pr-4">Percent Passing</th>
-                                                    <th className="py-2">Value (in)</th>
+                                                    <th className="py-2">Value (mm)</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P100</td>
-                                                    <td className="py-2 text-slate-700">2.953</td>
+                                                    <td className="py-2 text-slate-700">75.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P90</td>
-                                                    <td className="py-2 text-slate-700">1.850</td>
+                                                    <td className="py-2 text-slate-700">47.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P80</td>
-                                                    <td className="py-2 text-slate-700">1.575</td>
+                                                    <td className="py-2 text-slate-700">40.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P70</td>
-                                                    <td className="py-2 text-slate-700">1.417</td>
+                                                    <td className="py-2 text-slate-700">36.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P60</td>
-                                                    <td className="py-2 text-slate-700">1.260</td>
+                                                    <td className="py-2 text-slate-700">32.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P50</td>
-                                                    <td className="py-2 text-slate-700">1.102</td>
+                                                    <td className="py-2 text-slate-700">28.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P40</td>
-                                                    <td className="py-2 text-slate-700">0.984</td>
+                                                    <td className="py-2 text-slate-700">25.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P30</td>
-                                                    <td className="py-2 text-slate-700">0.827</td>
+                                                    <td className="py-2 text-slate-700">21.0</td>
                                                 </tr>
                                                 <tr className="border-b">
                                                     <td className="py-2 pr-4 text-slate-700">P20</td>
-                                                    <td className="py-2 text-slate-700">0.630</td>
+                                                    <td className="py-2 text-slate-700">16.0</td>
                                                 </tr>
                                                 <tr>
                                                     <td className="py-2 pr-4 text-slate-700">P10</td>
-                                                    <td className="py-2 text-slate-700">0.433</td>
+                                                    <td className="py-2 text-slate-700">11.0</td>
                                                 </tr>
                                             </tbody>
                                         </table>
