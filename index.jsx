@@ -130,10 +130,10 @@ const Badge = ({ tone = 'ok', children }) => {
 
 const Card = ({ title, icon, action, children, className = '' }) => (
     <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 ${className}`}>
-        <div className="flex items-center justify-between px-5 pt-4">
+        <div className="flex items-center justify-between p-5 pb-0">
             <div className="flex items-center gap-2">
                 {icon}
-                <h3 className="text-slate-800 font-semibold">{title}</h3>
+                <h3 className="text-base font-semibold text-slate-800 truncate" title={title}>{title}</h3>
             </div>
             {action}
         </div>
@@ -142,9 +142,11 @@ const Card = ({ title, icon, action, children, className = '' }) => (
 );
 
 const AxisCaption = ({ yAxisLabel }) => (
-    <div className="text-xs text-slate-500 mt-3 space-y-1 px-1">
-        <div>Eje Y: {yAxisLabel}</div>
-        <div>Eje X: Tamaño (mm)</div>
+    <div className="px-1 border-t border-slate-200 pt-2 mt-2">
+        <div className="text-xs text-slate-500 space-y-1">
+            <div>Eje Y: {yAxisLabel}</div>
+            <div>Eje X: Tamaño (mm)</div>
+        </div>
     </div>
 );
 
@@ -158,8 +160,6 @@ export default function DashboardGranulometria() {
     const [bucketSize, setBucketSize] = useState(20);
     const [normalizeByBinWidth, setNormalizeByBinWidth] = useState(false);
     const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
-    // alien: responsive viewport detection for histogram layout
-    const [viewportW, setViewportW] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
     const dropdownRef = useRef(null);
     const histogramTooltipRef = useRef(null);
 
@@ -179,18 +179,6 @@ export default function DashboardGranulometria() {
     };
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
-
-    // alien: viewport detection with resize listener for responsive histogram
-    useEffect(() => {
-        const handleResize = () => {
-            setViewportW(window.innerWidth);
-        };
-        
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -273,9 +261,6 @@ export default function DashboardGranulometria() {
     };
 
     const histogramData = generateHistogramData(bucketSize, normalizeByBinWidth);
-    
-    // alien: responsive breakpoint for mobile layout
-    const isMobile = viewportW < 640;
 
     const generatePDF = (periodo = '30d') => {
         const doc = new jsPDF();
@@ -517,7 +502,7 @@ export default function DashboardGranulometria() {
                     <>
                         {/* Período activo */}
                         <div className="flex items-center gap-3 mb-4">
-                            <h2 className="text-slate-800 font-semibold">Vista Ejecutiva</h2>
+                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Vista Ejecutiva</h2>
                             <Badge tone="info">Últimas 4 horas</Badge>
                         </div>
 
@@ -525,20 +510,20 @@ export default function DashboardGranulometria() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <Card title="Última medicion" icon={<Gauge className="text-slate-500" size={18} />}>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P80</span><Badge tone={estadoP80}>{kpis.p80Actual.toFixed(2)} mm</Badge></div>
-                                    <div className="flex items-center justify-between"><span className="text-slate-500 text-sm">P50</span><Badge tone="info">{kpis.p50Actual.toFixed(2)} mm</Badge></div>
+                                    <div className="flex items-center justify-between"><span className="text-sm text-slate-600">P80</span><Badge tone={estadoP80}>{kpis.p80Actual.toFixed(2)} mm</Badge></div>
+                                    <div className="flex items-center justify-between"><span className="text-sm text-slate-600">P50</span><Badge tone="info">{kpis.p50Actual.toFixed(2)} mm</Badge></div>
                                 </div>
                             </Card>
                             <Card title="Últimos 30 días" icon={<Activity className="text-slate-500" size={18} />}>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P80</span>
+                                        <span className="text-sm text-slate-600">P80</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-blue-600">{resumen.ult30d.p80.valor} {resumen.ult30d.p80.unidad}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P50</span>
+                                        <span className="text-sm text-slate-600">P50</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-purple-600">{resumen.ult30d.p50.valor} {resumen.ult30d.p50.unidad}</div>
                                         </div>
@@ -557,13 +542,13 @@ export default function DashboardGranulometria() {
                             <Card title="Últimos 7 días" icon={<Activity className="text-slate-500" size={18} />}>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P80</span>
+                                        <span className="text-sm text-slate-600">P80</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-blue-600">{resumen.ult7d.p80.valor} {resumen.ult7d.p80.unidad}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P50</span>
+                                        <span className="text-sm text-slate-600">P50</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-purple-600">{resumen.ult7d.p50.valor} {resumen.ult7d.p50.unidad}</div>
                                         </div>
@@ -582,13 +567,13 @@ export default function DashboardGranulometria() {
                             <Card title="Últimas 24 horas" icon={<Clock className="text-slate-500" size={18} />}>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P80</span>
+                                        <span className="text-sm text-slate-600">P80</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-blue-600">{resumen.ult24h.p80.valor} {resumen.ult24h.p80.unidad}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-500 text-sm">P50</span>
+                                        <span className="text-sm text-slate-600">P50</span>
                                         <div className="text-right">
                                             <div className="text-lg font-bold text-purple-600">{resumen.ult24h.p50.valor} {resumen.ult24h.p50.unidad}</div>
                                         </div>
@@ -644,27 +629,27 @@ export default function DashboardGranulometria() {
                                     <div className="flex bg-slate-100 rounded-lg p-1">
                                         <button
                                             onClick={() => setBucketSize(5)}
-                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 5
+                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 5
                                                 ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:text-slate-900'
+                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                                 }`}
                                         >
                                             5 rangos
                                         </button>
                                         <button
                                             onClick={() => setBucketSize(10)}
-                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 10
+                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 10
                                                 ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:text-slate-900'
+                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                                 }`}
                                         >
                                             10 rangos
                                         </button>
                                         <button
                                             onClick={() => setBucketSize(20)}
-                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${bucketSize === 20
+                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 20
                                                 ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:text-slate-900'
+                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                                 }`}
                                         >
                                             20 rangos
@@ -672,9 +657,9 @@ export default function DashboardGranulometria() {
                                     </div>
                                     <button
                                         onClick={() => setNormalizeByBinWidth(!normalizeByBinWidth)}
-                                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${normalizeByBinWidth
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${normalizeByBinWidth
                                             ? 'bg-blue-100 text-blue-900'
-                                            : 'bg-slate-100 text-slate-600 hover:text-slate-900'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
                                         {normalizeByBinWidth ? 'Densidad' : 'Frecuencia'}
@@ -682,14 +667,15 @@ export default function DashboardGranulometria() {
                                     <div className="relative" ref={histogramTooltipRef}>
                                         <button
                                             onClick={() => setShowHistogramTooltip(!showHistogramTooltip)}
-                                            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors"
+                                            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
                                             title="Información sobre el histograma"
+                                            aria-label="Información sobre el histograma"
                                         >
                                             <HelpCircle className="text-slate-600" size={14} />
                                         </button>
                                         {showHistogramTooltip && (
-                                            <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50">
-                                                <div className="text-sm space-y-2">
+                                            <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
+                                                <div className="text-xs space-y-2">
                                                     <div className="font-medium text-slate-800">Modos del histograma</div>
                                                     <div className="text-slate-600">
                                                         <div>• <strong>Frecuencia (%):</strong> cuánta parte del material cae en cada rango. Suma 100%.</div>
@@ -723,13 +709,19 @@ export default function DashboardGranulometria() {
                                                 normalizeByBinWidth 
                                                     ? `${value.toFixed(3)}` 
                                                     : `${value.toFixed(1)}%`,
-                                                // alien: tooltip shows units only in tooltip and legend
                                                 normalizeByBinWidth ? 'Densidad (1/mm)' : 'Frecuencia'
                                             ]}
                                             labelFormatter={(size) => `Tamaño: ${size} mm`}
+                                            contentStyle={{
+                                                backgroundColor: 'white',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '8px',
+                                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                                                fontSize: '12px'
+                                            }}
                                         />
                                         <Legend />
-                                        <Bar dataKey="frequency" name={normalizeByBinWidth ? 'Densidad' : 'Frecuencia (%)'} fill="#3b82f6" stroke="transparent" strokeWidth={0} />
+                                        <Bar dataKey="frequency" name={normalizeByBinWidth ? 'Densidad' : 'Frecuencia (%)'} fill="#3b82f6" stroke="transparent" strokeWidth={0} radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
@@ -738,14 +730,14 @@ export default function DashboardGranulometria() {
 
                         <Card title={`Muestra ${currentPage} de 10`} icon={<AlertTriangle className="text-slate-500" size={18} />}>
                             <div className="space-y-1">
-                                <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-                                    <div className="w-full bg-slate-100 flex items-center justify-center gap-4 p-4">
-                                        <img src="/raw.jpg" alt={`Muestra Raw ${currentPage}`} className="w-auto h-72 object-contain rotate-90" />
-                                        <img src="/muestra.jpg" alt={`Muestra ${currentPage}`} className="w-auto h-72 object-contain rotate-90" />
+                                <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                                    <div className="w-full bg-slate-50 flex items-center justify-center gap-4 p-4">
+                                        <img src="/raw.jpg" alt={`Muestra Raw ${currentPage}`} className="w-auto h-72 object-contain rotate-90 shadow-sm" />
+                                        <img src="/muestra.jpg" alt={`Muestra ${currentPage}`} className="w-auto h-72 object-contain rotate-90 shadow-sm" />
                                     </div>
                                     <div className="p-4 text-sm">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-slate-500 text-xs">{ultimasMuestras[currentPage - 1]?.fecha}</span>
+                                            <span className="text-xs text-slate-500">{ultimasMuestras[currentPage - 1]?.fecha}</span>
                                             <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} mm</Badge>
                                         </div>
                                     </div>
@@ -755,7 +747,8 @@ export default function DashboardGranulometria() {
                                     <button
                                         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                         disabled={currentPage === 1}
-                                        className="px-3 py-2 rounded-lg border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                                        className="h-8 px-3 rounded-md border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                        aria-label="Página anterior"
                                     >
                                         Anterior
                                     </button>
@@ -765,10 +758,11 @@ export default function DashboardGranulometria() {
                                             <button
                                                 key={page}
                                                 onClick={() => setCurrentPage(page)}
-                                                className={`w-8 h-8 rounded-full text-sm ${currentPage === page
+                                                className={`w-8 h-8 rounded-full text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${currentPage === page
                                                     ? 'bg-slate-900 text-white'
                                                     : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
                                                     }`}
+                                                aria-label={`Página ${page}`}
                                             >
                                                 {page}
                                             </button>
@@ -778,7 +772,8 @@ export default function DashboardGranulometria() {
                                     <button
                                         onClick={() => setCurrentPage(Math.min(10, currentPage + 1))}
                                         disabled={currentPage === 10}
-                                        className="px-3 py-2 rounded-lg border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                                        className="h-8 px-3 rounded-md border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                        aria-label="Página siguiente"
                                     >
                                         Siguiente
                                     </button>
@@ -794,34 +789,34 @@ export default function DashboardGranulometria() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <Beaker size={18} className="text-slate-500" />
-                                <h2 className="text-slate-800 font-semibold">Análisis técnico: {getTimePeriodLabel()}</h2>
+                                <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Análisis técnico: {getTimePeriodLabel()}</h2>
                                 <Badge tone="info">Modo experto</Badge>
                             </div>
 
                             <div className="flex bg-slate-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setTimePeriod('30d')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${timePeriod === '30d'
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
                                         ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:text-slate-900'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                         }`}
                                 >
                                     30 días
                                 </button>
                                 <button
                                     onClick={() => setTimePeriod('7d')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${timePeriod === '7d'
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
                                         ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:text-slate-900'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                         }`}
                                 >
                                     7 días
                                 </button>
                                 <button
                                     onClick={() => setTimePeriod('24h')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${timePeriod === '24h'
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
                                         ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:text-slate-900'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                         }`}
                                 >
                                     24 horas
@@ -928,18 +923,18 @@ export default function DashboardGranulometria() {
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     {/* Muestra y paginación */}
                                     <div className="space-y-4">
-                                        <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-                                            <div className="w-full bg-slate-100 space-y-2 p-4">
+                                        <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+                                            <div className="w-full bg-slate-50 space-y-2 p-4">
                                                 <div className="flex justify-center">
-                                                    <img src="/raw.jpg" alt={`Muestra Raw ${currentPage}`} className="max-w-full max-h-72 object-contain rotate-90" />
+                                                    <img src="/raw.jpg" alt={`Muestra Raw ${currentPage}`} className="max-w-full max-h-72 object-contain rotate-90 shadow-sm" />
                                                 </div>
                                                 <div className="flex justify-center">
-                                                    <img src="/muestra.jpg" alt={`Muestra ${currentPage}`} className="max-w-full max-h-72 object-contain rotate-90" />
+                                                    <img src="/muestra.jpg" alt={`Muestra ${currentPage}`} className="max-w-full max-h-72 object-contain rotate-90 shadow-sm" />
                                                 </div>
                                             </div>
                                             <div className="p-4 text-sm">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-slate-500 text-xs">{ultimasMuestras[currentPage - 1]?.fecha}</span>
+                                                    <span className="text-xs text-slate-500">{ultimasMuestras[currentPage - 1]?.fecha}</span>
                                                     <Badge tone="info">P80: {ultimasMuestras[currentPage - 1]?.p80} mm</Badge>
                                                 </div>
                                             </div>
@@ -950,7 +945,8 @@ export default function DashboardGranulometria() {
                                             <button
                                                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                                 disabled={currentPage === 1}
-                                                className="px-3 py-2 rounded-lg border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                                                className="h-8 px-3 rounded-md border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                                aria-label="Página anterior"
                                             >
                                                 Anterior
                                             </button>
@@ -960,10 +956,11 @@ export default function DashboardGranulometria() {
                                                     <button
                                                         key={page}
                                                         onClick={() => setCurrentPage(page)}
-                                                        className={`w-8 h-8 rounded-full text-sm ${currentPage === page
+                                                        className={`w-8 h-8 rounded-full text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${currentPage === page
                                                             ? 'bg-slate-900 text-white'
                                                             : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
                                                             }`}
+                                                        aria-label={`Página ${page}`}
                                                     >
                                                         {page}
                                                     </button>
@@ -973,7 +970,8 @@ export default function DashboardGranulometria() {
                                             <button
                                                 onClick={() => setCurrentPage(Math.min(10, currentPage + 1))}
                                                 disabled={currentPage === 10}
-                                                className="px-3 py-2 rounded-lg border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50"
+                                                className="h-8 px-3 rounded-md border border-slate-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                                aria-label="Página siguiente"
                                             >
                                                 Siguiente
                                             </button>
