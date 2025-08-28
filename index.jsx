@@ -154,7 +154,7 @@ const AxisCaption = ({ yAxisLabel }) => (
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
     const [currentPage, setCurrentPage] = useState(1);
-    const [timePeriod, setTimePeriod] = useState('30d');
+    const [timePeriod, setTimePeriod] = useState('24h'); // Default for Vista Ejecutiva
     const [selectedFormula, setSelectedFormula] = useState('swebrec');
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
@@ -180,6 +180,15 @@ export default function DashboardGranulometria() {
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
 
+    // Handle tab change and set default time period per view
+    useEffect(() => {
+        if (activeTab === 'ejecutiva') {
+            setTimePeriod('24h');
+        } else if (activeTab === 'tecnica') {
+            setTimePeriod('30d');
+        }
+    }, [activeTab]);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -199,31 +208,31 @@ export default function DashboardGranulometria() {
     const generateHistogramData = (buckets, normalizeByBinWidth = false) => {
         const maxSize = 76.20;
         const bucketWidth = maxSize / buckets;
-        
+
         // alien: ensure curvaGran is monotonic non-decreasing in pct before interpolation
         const sortedCurvaGran = [...curvaGran].sort((a, b) => a.size - b.size);
         for (let i = 1; i < sortedCurvaGran.length; i++) {
-            sortedCurvaGran[i].pct = Math.max(sortedCurvaGran[i].pct, sortedCurvaGran[i-1].pct);
+            sortedCurvaGran[i].pct = Math.max(sortedCurvaGran[i].pct, sortedCurvaGran[i - 1].pct);
         }
-        
+
         // Function to interpolate % passing at a given size using linear interpolation
         const interpolatePercentPassing = (targetSize) => {
             // Find the two points in sortedCurvaGran that bracket targetSize
             for (let i = 0; i < sortedCurvaGran.length - 1; i++) {
                 const point1 = sortedCurvaGran[i];
                 const point2 = sortedCurvaGran[i + 1];
-                
+
                 if (targetSize >= point1.size && targetSize <= point2.size) {
                     // Linear interpolation
                     const t = (targetSize - point1.size) / (point2.size - point1.size);
                     return point1.pct + t * (point2.pct - point1.pct);
                 }
             }
-            
+
             // If targetSize is outside the range, return boundary values
             if (targetSize <= sortedCurvaGran[0].size) return sortedCurvaGran[0].pct;
             if (targetSize >= sortedCurvaGran[sortedCurvaGran.length - 1].size) return sortedCurvaGran[sortedCurvaGran.length - 1].pct;
-            
+
             return 0;
         };
 
@@ -237,11 +246,11 @@ export default function DashboardGranulometria() {
             // Get % passing at start and end of bin
             const pctStart = interpolatePercentPassing(bucketStart);
             const pctEnd = interpolatePercentPassing(bucketEnd);
-            
+
             // alien: removed Math.abs for correct calculation
             const diffPct = pctEnd - pctStart;
             let frequency;
-            
+
             if (normalizeByBinWidth === false) {
                 // Frecuencia: en porcentaje del 0–100
                 frequency = diffPct;
@@ -484,8 +493,7 @@ export default function DashboardGranulometria() {
                                             className={`w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${selectedFormula === key ? 'bg-slate-50' : ''
                                                 }`}
                                         >
-                                            <div className="font-medium text-slate-800 mb-1">{formula.name}</div>
-                                            <div className="text-xs text-slate-600">{formula.tooltip}</div>
+                                            <div className="font-medium text-slate-800">{formula.name}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -501,17 +509,59 @@ export default function DashboardGranulometria() {
                 {activeTab === 'ejecutiva' && (
                     <>
                         {/* Período activo */}
-                        <div className="flex items-center gap-3 mb-4">
-                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Vista Ejecutiva</h2>
-                            <Badge tone="info">Últimas 4 horas</Badge>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Vista Ejecutiva</h2>
+                                <Badge tone="info">Modo ejecutivo</Badge>
+                            </div>
+
+                            <div className="flex bg-slate-100 rounded-lg p-1">
+                                <button
+                                    onClick={() => setTimePeriod('30d')}
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
+                                        ? 'bg-white text-slate-900 shadow-sm'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        }`}
+                                >
+                                    30 días
+                                </button>
+                                <button
+                                    onClick={() => setTimePeriod('7d')}
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
+                                        ? 'bg-white text-slate-900 shadow-sm'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        }`}
+                                >
+                                    7 días
+                                </button>
+                                <button
+                                    onClick={() => setTimePeriod('24h')}
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
+                                        ? 'bg-white text-slate-900 shadow-sm'
+                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        }`}
+                                >
+                                    24 horas
+                                </button>
+                            </div>
                         </div>
 
                         {/* === KPIs / resumen === */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <Card title="Última medicion" icon={<Gauge className="text-slate-500" size={18} />}>
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between"><span className="text-sm text-slate-600">P80</span><Badge tone={estadoP80}>{kpis.p80Actual.toFixed(2)} mm</Badge></div>
-                                    <div className="flex items-center justify-between"><span className="text-sm text-slate-600">P50</span><Badge tone="info">{kpis.p50Actual.toFixed(2)} mm</Badge></div>
+                            <Card title="Últimos 10 minutos" icon={<Gauge className="text-slate-500" size={18} />}>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P80</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-blue-600">{kpis.p80Actual.toFixed(2)} mm</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P50</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-purple-600">{kpis.p50Actual.toFixed(2)} mm</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </Card>
                             <Card title="Últimos 30 días" icon={<Activity className="text-slate-500" size={18} />}>
@@ -607,21 +657,6 @@ export default function DashboardGranulometria() {
                             </div>
                         </Card>
 
-                        <Card title="Curva Granulométrica">
-                            <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
-                                        <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-                                        <Legend />
-                                        <Line type="monotone" dataKey="pct" name="Curva granulométrica" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
-                                        <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="5 5" label={{ value: "P80", position: "topLeft" }} />
-                                        <ReferenceLine y={50} stroke="#7c3aed" strokeDasharray="5 5" label={{ value: "P50", position: "topLeft" }} />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </Card>
 
                         <Card title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
                             action={
@@ -689,14 +724,14 @@ export default function DashboardGranulometria() {
                             }>
                             <div className="h-72">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart 
-                                        data={histogramData} 
-                                        margin={{ 
-                                            top: 10, 
-                                            right: 20, 
-                                            bottom: 10, 
+                                    <BarChart
+                                        data={histogramData}
+                                        margin={{
+                                            top: 10,
+                                            right: 20,
+                                            bottom: 10,
                                             left: 16
-                                        }} 
+                                        }}
                                         barCategoryGap={0}
                                     >
                                         <CartesianGrid strokeDasharray="3 3" />
@@ -704,10 +739,10 @@ export default function DashboardGranulometria() {
                                         <YAxis
                                             width={40}
                                         />
-                                        <Tooltip 
+                                        <Tooltip
                                             formatter={(value) => [
-                                                normalizeByBinWidth 
-                                                    ? `${value.toFixed(3)}` 
+                                                normalizeByBinWidth
+                                                    ? `${value.toFixed(3)}`
                                                     : `${value.toFixed(1)}%`,
                                                 normalizeByBinWidth ? 'Densidad (1/mm)' : 'Frecuencia'
                                             ]}
