@@ -70,7 +70,7 @@ const AxisCaption = ({ yAxisLabel }) => (
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
     const [currentPage, setCurrentPage] = useState(1);
-    const [timePeriod, setTimePeriod] = useState('24h'); // Default for Vista Ejecutiva
+    const [timePeriod, setTimePeriod] = useState('10m'); // Default for Vista Ejecutiva
     const [selectedFormula, setSelectedFormula] = useState('swebrec');
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
@@ -100,7 +100,7 @@ export default function DashboardGranulometria() {
     // Handle tab change and set default time period per view
     useEffect(() => {
         if (activeTab === 'ejecutiva') {
-            setTimePeriod('24h');
+            setTimePeriod('10m');
         } else if (activeTab === 'tecnica') {
             setTimePeriod('30d');
         }
