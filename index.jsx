@@ -14,7 +14,7 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
-import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData } from './mock-data.js';
+import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaGranByPeriod } from './mock-data.js';
 
 
 // ===== UI helpers =====
@@ -105,12 +105,12 @@ export default function DashboardGranulometria() {
         };
     }, []);
 
-    const generateHistogramData = (buckets, normalizeByBinWidth = false) => {
+    const generateHistogramData = (curve, buckets, normalizeByBinWidth = false) => {
         const maxSize = 76.20;
         const bucketWidth = maxSize / buckets;
 
-        // alien: ensure curvaGran is monotonic non-decreasing in pct before interpolation
-        const sortedCurvaGran = [...curvaGran].sort((a, b) => a.size - b.size);
+        // alien: ensure curve is monotonic non-decreasing in pct before interpolation
+        const sortedCurvaGran = [...curve].sort((a, b) => a.size - b.size);
         for (let i = 1; i < sortedCurvaGran.length; i++) {
             sortedCurvaGran[i].pct = Math.max(sortedCurvaGran[i].pct, sortedCurvaGran[i - 1].pct);
         }
@@ -169,7 +169,8 @@ export default function DashboardGranulometria() {
         return histogramData;
     };
 
-    const histogramData = generateHistogramData(bucketSize, normalizeByBinWidth);
+    const histCurve = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
+    const histogramData = generateHistogramData(histCurve, bucketSize, normalizeByBinWidth);
 
     // Get current granulometry data based on selected time period
     const getCurrentGranulometryData = () => {

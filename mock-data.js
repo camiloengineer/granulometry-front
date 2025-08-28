@@ -61,6 +61,112 @@ export const curvaGran = [
     { size: 76.20, pct: 100, p80: null, p50: null }
 ];
 
+// Period-specific curves for histogram snapshots
+const curvaGran_24h = [
+    { size: 0, pct: 0, p80: null, p50: null },
+    { size: 1.60, pct: 2.2, p80: null, p50: null },
+    { size: 3.18, pct: 5.1, p80: null, p50: null },
+    { size: 4.57, pct: 12.3, p80: null, p50: null },
+    { size: 6.35, pct: 18.5, p80: null, p50: null },
+    { size: 8.89, pct: 26.2, p80: null, p50: null },
+    { size: 10.80, pct: 32.4, p80: null, p50: null },
+    { size: 12.70, pct: 37.1, p80: null, p50: null },
+    { size: 15.24, pct: 43.3, p80: null, p50: null },
+    { size: 17.78, pct: 48.2, p80: null, p50: null },
+    { size: 19.05, pct: 55.1, p80: null, p50: null },
+    { size: 21.59, pct: 62.3, p80: null, p50: null },
+    { size: 24.13, pct: 67.2, p80: null, p50: null },
+    { size: 25.40, pct: 70.1, p80: null, p50: null },
+    { size: 27.99, pct: 50.2, p80: null, p50: 50 },
+    { size: 29.97, pct: 76.3, p80: null, p50: null },
+    { size: 31.75, pct: 79.1, p80: null, p50: null },
+    { size: 34.29, pct: 82.2, p80: null, p50: null },
+    { size: 36.83, pct: 84.1, p80: null, p50: null },
+    { size: 38.10, pct: 86.2, p80: null, p50: null },
+    { size: 40.01, pct: 80.1, p80: 80, p50: null },
+    { size: 41.91, pct: 88.3, p80: null, p50: null },
+    { size: 44.45, pct: 92.1, p80: null, p50: null },
+    { size: 46.99, pct: 94.2, p80: null, p50: null },
+    { size: 50.80, pct: 96.1, p80: null, p50: null },
+    { size: 54.61, pct: 97.2, p80: null, p50: null },
+    { size: 58.42, pct: 98.1, p80: null, p50: null },
+    { size: 63.50, pct: 99.1, p80: null, p50: null },
+    { size: 69.85, pct: 99.6, p80: null, p50: null },
+    { size: 76.20, pct: 100, p80: null, p50: null }
+];
+
+const curvaGran_7d = [
+    { size: 0, pct: 0, p80: null, p50: null },
+    { size: 1.60, pct: 1.8, p80: null, p50: null },
+    { size: 3.18, pct: 4.7, p80: null, p50: null },
+    { size: 4.57, pct: 11.5, p80: null, p50: null },
+    { size: 6.35, pct: 17.8, p80: null, p50: null },
+    { size: 8.89, pct: 25.6, p80: null, p50: null },
+    { size: 10.80, pct: 31.7, p80: null, p50: null },
+    { size: 12.70, pct: 36.8, p80: null, p50: null },
+    { size: 15.24, pct: 42.6, p80: null, p50: null },
+    { size: 17.78, pct: 47.9, p80: null, p50: null },
+    { size: 19.05, pct: 54.7, p80: null, p50: null },
+    { size: 21.59, pct: 61.8, p80: null, p50: null },
+    { size: 24.13, pct: 66.9, p80: null, p50: null },
+    { size: 25.40, pct: 69.7, p80: null, p50: null },
+    { size: 27.99, pct: 49.8, p80: null, p50: 50 },
+    { size: 29.97, pct: 75.9, p80: null, p50: null },
+    { size: 31.75, pct: 78.7, p80: null, p50: null },
+    { size: 34.29, pct: 81.8, p80: null, p50: null },
+    { size: 36.83, pct: 83.9, p80: null, p50: null },
+    { size: 38.10, pct: 85.8, p80: null, p50: null },
+    { size: 40.01, pct: 79.9, p80: 80, p50: null },
+    { size: 41.91, pct: 87.8, p80: null, p50: null },
+    { size: 44.45, pct: 91.9, p80: null, p50: null },
+    { size: 46.99, pct: 93.8, p80: null, p50: null },
+    { size: 50.80, pct: 95.9, p80: null, p50: null },
+    { size: 54.61, pct: 96.8, p80: null, p50: null },
+    { size: 58.42, pct: 97.9, p80: null, p50: null },
+    { size: 63.50, pct: 98.8, p80: null, p50: null },
+    { size: 69.85, pct: 99.4, p80: null, p50: null },
+    { size: 76.20, pct: 100, p80: null, p50: null }
+];
+
+const curvaGran_30d = [
+    { size: 0, pct: 0, p80: null, p50: null },
+    { size: 1.60, pct: 2.4, p80: null, p50: null },
+    { size: 3.18, pct: 5.3, p80: null, p50: null },
+    { size: 4.57, pct: 12.7, p80: null, p50: null },
+    { size: 6.35, pct: 18.9, p80: null, p50: null },
+    { size: 8.89, pct: 26.8, p80: null, p50: null },
+    { size: 10.80, pct: 32.9, p80: null, p50: null },
+    { size: 12.70, pct: 37.6, p80: null, p50: null },
+    { size: 15.24, pct: 43.8, p80: null, p50: null },
+    { size: 17.78, pct: 48.6, p80: null, p50: null },
+    { size: 19.05, pct: 55.4, p80: null, p50: null },
+    { size: 21.59, pct: 62.7, p80: null, p50: null },
+    { size: 24.13, pct: 67.6, p80: null, p50: null },
+    { size: 25.40, pct: 70.4, p80: null, p50: null },
+    { size: 27.99, pct: 50.4, p80: null, p50: 50 },
+    { size: 29.97, pct: 76.7, p80: null, p50: null },
+    { size: 31.75, pct: 79.4, p80: null, p50: null },
+    { size: 34.29, pct: 82.6, p80: null, p50: null },
+    { size: 36.83, pct: 84.4, p80: null, p50: null },
+    { size: 38.10, pct: 86.6, p80: null, p50: null },
+    { size: 40.01, pct: 80.4, p80: 80, p50: null },
+    { size: 41.91, pct: 88.7, p80: null, p50: null },
+    { size: 44.45, pct: 92.4, p80: null, p50: null },
+    { size: 46.99, pct: 94.6, p80: null, p50: null },
+    { size: 50.80, pct: 96.4, p80: null, p50: null },
+    { size: 54.61, pct: 97.6, p80: null, p50: null },
+    { size: 58.42, pct: 98.4, p80: null, p50: null },
+    { size: 63.50, pct: 99.4, p80: null, p50: null },
+    { size: 69.85, pct: 99.7, p80: null, p50: null },
+    { size: 76.20, pct: 100, p80: null, p50: null }
+];
+
+export const curvaGranByPeriod = {
+    '24h': curvaGran_24h,
+    '7d': curvaGran_7d,
+    '30d': curvaGran_30d
+};
+
 export const ultimasMuestras = [
     { id: 1, fecha: '2025-09-29 10:00', p80: '46.23', imagen: '' },
     { id: 2, fecha: '2025-09-29 11:00', p80: '44.45', imagen: '' },
