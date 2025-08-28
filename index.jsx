@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { Activity, AlertTriangle, Beaker, ChevronDown, Clock, Download, Gauge, HelpCircle, TrendingUp } from 'lucide-react';
+import { Activity, AlertTriangle, Beaker, ChevronDown, Clock, Download, Gauge, HelpCircle, RefreshCcw, TrendingUp } from 'lucide-react';
 import { useEffect, useRef, useState } from "react";
 import {
     Bar,
@@ -487,16 +487,23 @@ export default function DashboardGranulometria() {
                                 Análisis Técnico
                             </button>
                         </div>
-                        <div className="relative" ref={dropdownRef}>
+                        <div className="flex gap-2">
                             <button
-                                onClick={() => setShowFormulaDropdown(!showFormulaDropdown)}
-                                className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
-                                title={formulas[selectedFormula].tooltip}
+                                onClick={() => {}}
+                                className="bg-white rounded-lg p-2 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors"
                             >
-                                <Beaker className="text-slate-500" size={16} />
-                                <span className="text-slate-700 text-sm font-medium">Fórmula: {formulas[selectedFormula].name}</span>
-                                <ChevronDown className="text-slate-500" size={14} />
+                                <RefreshCcw className="text-slate-500" size={16} />
                             </button>
+                            <div className="relative" ref={dropdownRef}>
+                                <button
+                                    onClick={() => setShowFormulaDropdown(!showFormulaDropdown)}
+                                    className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
+                                    title={formulas[selectedFormula].tooltip}
+                                >
+                                    <Beaker className="text-slate-500" size={16} />
+                                    <span className="text-slate-700 text-sm font-medium">Fórmula: {formulas[selectedFormula].name}</span>
+                                    <ChevronDown className="text-slate-500" size={14} />
+                                </button>
                             {showFormulaDropdown && (
                                 <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-80 z-50">
                                     {Object.entries(formulas).map(([key, formula]) => (
@@ -514,6 +521,7 @@ export default function DashboardGranulometria() {
                                     ))}
                                 </div>
                             )}
+                            </div>
                         </div>
                     </div>
                 </div>
