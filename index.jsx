@@ -191,7 +191,34 @@ export default function DashboardGranulometria() {
 
     // Get current granulometry data based on selected time period
     const getCurrentGranulometryData = () => {
-        return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
+        if (activeTab === 'ejecutiva') {
+            // In Ejecutiva view, use curvaGranByPeriod data and format X-axis labels
+            const baseData = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
+            return baseData.map((item, index) => {
+                let timeLabel;
+                switch (timePeriod) {
+                    case '24h':
+                        timeLabel = `Hora ${index + 1}`;
+                        break;
+                    case '6h':
+                        timeLabel = `H${index + 1}`;
+                        break;
+                    case '10m':
+                        timeLabel = `Min ${index + 1}`;
+                        break;
+                    default:
+                        timeLabel = `Hora ${index + 1}`;
+                }
+                return {
+                    time: timeLabel,
+                    p80: item.pct * 0.8, // Convert to approximate P80 value
+                    p50: item.pct * 0.5  // Convert to approximate P50 value
+                };
+            });
+        } else {
+            // In Técnica view, use original mockGranulometryData
+            return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
+        }
     };
 
     const currentGranulometryData = getCurrentGranulometryData();
@@ -367,7 +394,9 @@ export default function DashboardGranulometria() {
             case '30d': return 'Últimos 30 días';
             case '7d': return 'Últimos 7 días';
             case '24h': return 'Últimas 24 horas';
-            default: return 'Últimos 30 días';
+            case '6h': return 'Últimas 6 horas';
+            case '10m': return 'Últimos 10 minutos';
+            default: return 'Últimas 24 horas';
         }
     };
 
@@ -443,31 +472,31 @@ export default function DashboardGranulometria() {
                             <div className="relative">
                                 <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
-                                        onClick={() => setTimePeriod('30d')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        30 días
-                                    </button>
-                                    <button
-                                        onClick={() => setTimePeriod('7d')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
-                                            ? 'bg-white text-slate-900 shadow-sm'
-                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                            }`}
-                                    >
-                                        7 días
-                                    </button>
-                                    <button
                                         onClick={() => setTimePeriod('24h')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        24 horas
+                                        24h
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('6h')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '6h'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        6h
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('10m')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '10m'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        10m
                                     </button>
                                 </div>
                             </div>
@@ -568,7 +597,7 @@ export default function DashboardGranulometria() {
                             </Card>
                         </div>
 
-                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
+                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={activeTab === 'ejecutiva' && timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={currentGranulometryData}>
@@ -586,7 +615,7 @@ export default function DashboardGranulometria() {
 
                         <Card
                             title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
-                            action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
+                            action={activeTab === 'ejecutiva' && timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
                             <div className="mb-4 flex gap-2 items-center justify-end">
                                 <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
