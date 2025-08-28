@@ -436,7 +436,7 @@ export default function DashboardGranulometria() {
                         {/* Período activo */}
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Vista Ejecutiva</h2>
+                                <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Vista Ejecutiva: {getTimePeriodLabel()}</h2>
                                 <Badge tone="info">Modo ejecutivo</Badge>
                             </div>
 
@@ -568,7 +568,7 @@ export default function DashboardGranulometria() {
                             </Card>
                         </div>
 
-                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
+                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={currentGranulometryData}>
@@ -586,7 +586,7 @@ export default function DashboardGranulometria() {
 
                         <Card
                             title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
-                            action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
+                            action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
                             <div className="mb-4 flex gap-2 items-center justify-end">
                                 <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
@@ -789,7 +789,7 @@ export default function DashboardGranulometria() {
 
                         <div className="space-y-4">
                             {/* Card Resumen */}
-                            <Card title="Resumen curva granulométrica" icon={<Beaker className="text-slate-500" size={18} />}>
+                            <Card title="Resumen curva granulométrica" icon={<Beaker className="text-slate-500" size={18} />} action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     {/* Tabla Percent Passing */}
                                     <div>
