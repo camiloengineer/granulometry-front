@@ -423,34 +423,36 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo ejecutivo</Badge>
                             </div>
 
-                            <div className="flex bg-slate-100 rounded-lg p-1">
-                                <button
-                                    onClick={() => setTimePeriod('30d')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    30 días
-                                </button>
-                                <button
-                                    onClick={() => setTimePeriod('7d')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    7 días
-                                </button>
-                                <button
-                                    onClick={() => setTimePeriod('24h')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    24 horas
-                                </button>
+                            <div className="sticky top-12 z-20">
+                                <div className="flex bg-slate-100 rounded-lg p-1">
+                                    <button
+                                        onClick={() => setTimePeriod('30d')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        30 días
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('7d')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        7 días
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('24h')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        24 horas
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -735,34 +737,36 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo experto</Badge>
                             </div>
 
-                            <div className="flex bg-slate-100 rounded-lg p-1">
-                                <button
-                                    onClick={() => setTimePeriod('30d')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    30 días
-                                </button>
-                                <button
-                                    onClick={() => setTimePeriod('7d')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    7 días
-                                </button>
-                                <button
-                                    onClick={() => setTimePeriod('24h')}
-                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
-                                        ? 'bg-white text-slate-900 shadow-sm'
-                                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                        }`}
-                                >
-                                    24 horas
-                                </button>
+                            <div className="sticky top-12 z-20">
+                                <div className="flex bg-slate-100 rounded-lg p-1">
+                                    <button
+                                        onClick={() => setTimePeriod('30d')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        30 días
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('7d')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '7d'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        7 días
+                                    </button>
+                                    <button
+                                        onClick={() => setTimePeriod('24h')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        24 horas
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
