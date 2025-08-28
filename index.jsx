@@ -77,6 +77,13 @@ export default function DashboardGranulometria() {
     const [normalizeByBinWidth, setNormalizeByBinWidth] = useState(false);
     const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
     const [shift, setShift] = useState('Todos');
+    const [showCustomRange, setShowCustomRange] = useState(false);
+    const [customFromDate, setCustomFromDate] = useState('');
+    const [customToDate, setCustomToDate] = useState('');
+    const [customFromTime, setCustomFromTime] = useState('');
+    const [customToTime, setCustomToTime] = useState('');
+    const [customShift, setCustomShift] = useState('Todos');
+    const [dateRangeError, setDateRangeError] = useState('');
     const dropdownRef = useRef(null);
     const histogramTooltipRef = useRef(null);
 
@@ -116,11 +123,41 @@ export default function DashboardGranulometria() {
             }
         };
 
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape' && showCustomRange) {
+                setShowCustomRange(false);
+            }
+        };
+
         document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [showCustomRange]);
+
+    const handleCustomDateSearch = () => {
+        if (!customFromDate || !customToDate) {
+            setDateRangeError('Por favor selecciona las fechas desde y hasta');
+            return;
+        }
+        
+        const fromDateTime = new Date(customFromDate + (customFromTime ? `T${customFromTime}` : 'T00:00'));
+        const toDateTime = new Date(customToDate + (customToTime ? `T${customToTime}` : 'T23:59'));
+        
+        if (fromDateTime > toDateTime) {
+            setDateRangeError('La fecha desde debe ser anterior a la fecha hasta');
+            return;
+        }
+        
+        setDateRangeError('');
+        setShowCustomRange(false);
+    };
+
+    const handleDownloadCustomReport = () => {
+        generatePDF('custom');
+    };
 
     const generateHistogramData = (curve, buckets, normalizeByBinWidth = false) => {
         const maxSize = 76.20;
@@ -545,48 +582,23 @@ export default function DashboardGranulometria() {
                                     </div>
                                 </div>
                             </Card>
-                            <Card title="Últimos 30 días" icon={<Activity className="text-slate-500" size={18} />}>
+                            <Card title="Últimas 6 horas" icon={<Activity className="text-slate-500" size={18} />}>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm text-slate-600">P80</span>
                                         <div className="text-right">
-                                            <div className="text-lg font-bold text-blue-600">{resumen.ult30d.p80.valor} {resumen.ult30d.p80.unidad}</div>
+                                            <div className="text-lg font-bold text-blue-600">{resumen.ult24h.p80.valor} {resumen.ult24h.p80.unidad}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm text-slate-600">P50</span>
                                         <div className="text-right">
-                                            <div className="text-lg font-bold text-purple-600">{resumen.ult30d.p50.valor} {resumen.ult30d.p50.unidad}</div>
+                                            <div className="text-lg font-bold text-purple-600">{resumen.ult24h.p50.valor} {resumen.ult24h.p50.unidad}</div>
                                         </div>
                                     </div>
                                     <div className="mt-3 pt-3 border-t border-slate-200">
                                         <button
-                                            onClick={() => generatePDF('30d')}
-                                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
-                                        >
-                                            <Download size={14} />
-                                            <span>Descargar reporte</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </Card>
-                            <Card title="Últimos 7 días" icon={<Activity className="text-slate-500" size={18} />}>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-600">P80</span>
-                                        <div className="text-right">
-                                            <div className="text-lg font-bold text-blue-600">{resumen.ult7d.p80.valor} {resumen.ult7d.p80.unidad}</div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-600">P50</span>
-                                        <div className="text-right">
-                                            <div className="text-lg font-bold text-purple-600">{resumen.ult7d.p50.valor} {resumen.ult7d.p50.unidad}</div>
-                                        </div>
-                                    </div>
-                                    <div className="mt-3 pt-3 border-t border-slate-200">
-                                        <button
-                                            onClick={() => generatePDF('7d')}
+                                            onClick={() => generatePDF('24h')}
                                             className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
                                         >
                                             <Download size={14} />
@@ -618,6 +630,16 @@ export default function DashboardGranulometria() {
                                             <span>Descargar reporte</span>
                                         </button>
                                     </div>
+                                </div>
+                            </Card>
+                            <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
+                                <div className="flex items-center justify-center">
+                                    <button 
+                                        onClick={() => setShowCustomRange(true)}
+                                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+                                    >
+                                        Fecha personalizada
+                                    </button>
                                 </div>
                             </Card>
                         </div>
@@ -839,6 +861,95 @@ export default function DashboardGranulometria() {
                                     </button>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* === KPIs / resumen === */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <Card title="Últimos 30 días" icon={<Activity className="text-slate-500" size={18} />}>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P80</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-blue-600">{resumen.ult30d.p80.valor} {resumen.ult30d.p80.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P50</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-purple-600">{resumen.ult30d.p50.valor} {resumen.ult30d.p50.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-slate-200">
+                                        <button
+                                            onClick={() => generatePDF('30d')}
+                                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                                        >
+                                            <Download size={14} />
+                                            <span>Descargar reporte</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </Card>
+                            <Card title="Últimos 7 días" icon={<Activity className="text-slate-500" size={18} />}>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P80</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-blue-600">{resumen.ult7d.p80.valor} {resumen.ult7d.p80.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P50</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-purple-600">{resumen.ult7d.p50.valor} {resumen.ult7d.p50.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-slate-200">
+                                        <button
+                                            onClick={() => generatePDF('7d')}
+                                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                                        >
+                                            <Download size={14} />
+                                            <span>Descargar reporte</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </Card>
+                            <Card title="Últimas 24 horas" icon={<Clock className="text-slate-500" size={18} />}>
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P80</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-blue-600">{resumen.ult24h.p80.valor} {resumen.ult24h.p80.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-slate-600">P50</span>
+                                        <div className="text-right">
+                                            <div className="text-lg font-bold text-purple-600">{resumen.ult24h.p50.valor} {resumen.ult24h.p50.unidad}</div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t border-slate-200">
+                                        <button
+                                            onClick={() => generatePDF('24h')}
+                                            className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                                        >
+                                            <Download size={14} />
+                                            <span>Descargar reporte</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </Card>
+                            <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
+                                <div className="flex items-center justify-center">
+                                    <button 
+                                        onClick={() => setShowCustomRange(true)}
+                                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+                                    >
+                                        Fecha personalizada
+                                    </button>
+                                </div>
+                            </Card>
                         </div>
 
                         <div className="space-y-4">
@@ -1066,6 +1177,154 @@ export default function DashboardGranulometria() {
                     </section>
                 )}
             </main>
+
+            {/* Sidebar: Fecha personalizada */}
+            {showCustomRange && (
+                <>
+                    {/* Overlay */}
+                    <div 
+                        className="fixed inset-0 bg-slate-900/30 z-40"
+                        onClick={() => setShowCustomRange(false)}
+                    />
+                    
+                    {/* Sidebar */}
+                    <aside 
+                        className="fixed right-0 top-0 h-screen w-[360px] bg-white shadow-xl border-l z-50 flex flex-col"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="custom-date-title"
+                    >
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-4 pb-0 mb-6">
+                            <h2 id="custom-date-title" className="text-lg font-semibold text-slate-800">
+                                Fecha personalizada
+                            </h2>
+                            <button 
+                                onClick={() => setShowCustomRange(false)}
+                                className="p-1 hover:bg-slate-100 rounded-full transition-colors"
+                                aria-label="Cerrar"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        {/* Scrollable Body */}
+                        <div className="flex-1 overflow-y-auto px-4">
+                            <div className="space-y-4">
+                                {/* Date Fields - One below the other */}
+                                <div>
+                                    <label htmlFor="fecha-desde" className="block text-sm font-medium text-slate-700 mb-1">
+                                        Fecha desde
+                                    </label>
+                                    <input
+                                        id="fecha-desde"
+                                        type="date"
+                                        value={customFromDate}
+                                        onChange={(e) => {
+                                            setCustomFromDate(e.target.value);
+                                            setDateRangeError('');
+                                        }}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                            dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                        }`}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="fecha-hasta" className="block text-sm font-medium text-slate-700 mb-1">
+                                        Fecha hasta
+                                    </label>
+                                    <input
+                                        id="fecha-hasta"
+                                        type="date"
+                                        value={customToDate}
+                                        onChange={(e) => {
+                                            setCustomToDate(e.target.value);
+                                            setDateRangeError('');
+                                        }}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                                            dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                        }`}
+                                    />
+                                </div>
+
+                                {/* Time Fields - Grid 2 columns */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label htmlFor="hora-desde" className="block text-sm font-medium text-slate-700 mb-1">
+                                            Hora desde
+                                        </label>
+                                        <input
+                                            id="hora-desde"
+                                            type="time"
+                                            step="60"
+                                            value={customFromTime}
+                                            onChange={(e) => setCustomFromTime(e.target.value)}
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="hora-hasta" className="block text-sm font-medium text-slate-700 mb-1">
+                                            Hora hasta
+                                        </label>
+                                        <input
+                                            id="hora-hasta"
+                                            type="time"
+                                            step="60"
+                                            value={customToTime}
+                                            onChange={(e) => setCustomToTime(e.target.value)}
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Shift Selector */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Turno
+                                    </label>
+                                    <ShiftSelector 
+                                        selectedShift={customShift} 
+                                        onShiftChange={setCustomShift} 
+                                    />
+                                </div>
+
+                                {/* Error Message */}
+                                {dateRangeError && (
+                                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <p className="text-sm text-red-600">{dateRangeError}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Sticky Footer with CTAs */}
+                        <div className="sticky bottom-0 bg-white border-t p-4 space-y-3">
+                            <div className="grid grid-cols-2 gap-2">
+                                <button 
+                                    onClick={handleCustomDateSearch}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                                >
+                                    Buscar
+                                </button>
+                                <button 
+                                    onClick={handleDownloadCustomReport}
+                                    className="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
+                                >
+                                    Descargar reporte
+                                </button>
+                            </div>
+                            <button 
+                                onClick={() => setShowCustomRange(false)}
+                                className="w-full text-slate-600 hover:text-slate-800 py-2 text-sm transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </aside>
+                </>
+            )}
         </div>
     );
 }
