@@ -423,8 +423,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo ejecutivo</Badge>
                             </div>
 
-                            <div className="sticky top-12 z-20">
-                                <div className="flex bg-slate-100 rounded-lg p-1">
+                            <div className="relative">
+                                <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('30d')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
@@ -737,8 +737,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo experto</Badge>
                             </div>
 
-                            <div className="sticky top-12 z-20">
-                                <div className="flex bg-slate-100 rounded-lg p-1">
+                            <div className="relative">
+                                <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('30d')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
