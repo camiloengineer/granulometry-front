@@ -19,18 +19,16 @@ import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaG
 
 // ===== UI helpers =====
 const ShiftSelector = ({ selectedShift, onShiftChange }) => (
-    <div className="flex bg-slate-100 rounded-lg p-1">
-        {['Todos', 'A', 'B', 'C', 'D'].map((shiftLetter) => (
+    <div className="flex bg-slate-100 rounded-lg p-1" role="radiogroup" aria-label="Turnos">
+        {['Todos','A','B','C','D'].map((shiftLetter) => (
             <button
                 key={shiftLetter}
                 onClick={() => onShiftChange(shiftLetter)}
                 className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${
-                    selectedShift === shiftLetter
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    selectedShift === shiftLetter ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
             >
-                {shiftLetter}
+                {shiftLetter === 'Todos' ? 'Todos' : `Turno ${shiftLetter}`}
             </button>
         ))}
     </div>
@@ -586,10 +584,9 @@ export default function DashboardGranulometria() {
                         </Card>
 
 
-                        <Card title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}>
-                            <div className="mb-4 flex justify-end">
-                                <ShiftSelector selectedShift={shift} onShiftChange={setShift} />
-                            </div>
+                        <Card
+                            title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
+                            action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
                             <div className="mb-4 flex gap-2 items-center justify-end">
                                 <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
