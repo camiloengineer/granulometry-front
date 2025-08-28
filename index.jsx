@@ -70,7 +70,7 @@ const AxisCaption = ({ yAxisLabel }) => (
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
     const [currentPage, setCurrentPage] = useState(1);
-    const [timePeriod, setTimePeriod] = useState('24h'); // Default for Vista Ejecutiva
+    const [timePeriod, setTimePeriod] = useState('10m'); // Default for Vista Ejecutiva
     const [selectedFormula, setSelectedFormula] = useState('swebrec');
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
@@ -100,7 +100,7 @@ export default function DashboardGranulometria() {
     // Handle tab change and set default time period per view
     useEffect(() => {
         if (activeTab === 'ejecutiva') {
-            setTimePeriod('24h');
+            setTimePeriod('10m');
         } else if (activeTab === 'tecnica') {
             setTimePeriod('30d');
         }
@@ -396,7 +396,7 @@ export default function DashboardGranulometria() {
             case '24h': return 'Últimas 24 horas';
             case '6h': return 'Últimas 6 horas';
             case '10m': return 'Últimos 10 minutos';
-            default: return 'Últimas 24 horas';
+            default: return 'Últimos 10 minutos';
         }
     };
 
@@ -472,13 +472,13 @@ export default function DashboardGranulometria() {
                             <div className="relative">
                                 <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
-                                        onClick={() => setTimePeriod('24h')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
+                                        onClick={() => setTimePeriod('10m')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '10m'
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        24h
+                                        10m
                                     </button>
                                     <button
                                         onClick={() => setTimePeriod('6h')}
@@ -490,13 +490,13 @@ export default function DashboardGranulometria() {
                                         6h
                                     </button>
                                     <button
-                                        onClick={() => setTimePeriod('10m')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '10m'
+                                        onClick={() => setTimePeriod('24h')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        10m
+                                        24h
                                     </button>
                                 </div>
                             </div>
