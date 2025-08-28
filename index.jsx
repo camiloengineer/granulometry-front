@@ -18,6 +18,24 @@ import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaG
 
 
 // ===== UI helpers =====
+const ShiftSelector = ({ selectedShift, onShiftChange }) => (
+    <div className="flex bg-slate-100 rounded-lg p-1">
+        {['Todos', 'A', 'B', 'C', 'D'].map((shiftLetter) => (
+            <button
+                key={shiftLetter}
+                onClick={() => onShiftChange(shiftLetter)}
+                className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${
+                    selectedShift === shiftLetter
+                        ? 'bg-white text-slate-900 shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+            >
+                {shiftLetter}
+            </button>
+        ))}
+    </div>
+);
+
 const Badge = ({ tone = 'ok', children }) => {
     const map = {
         ok: 'bg-emerald-100 text-emerald-700 border-emerald-200',
@@ -60,6 +78,7 @@ export default function DashboardGranulometria() {
     const [bucketSize, setBucketSize] = useState(20);
     const [normalizeByBinWidth, setNormalizeByBinWidth] = useState(false);
     const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
+    const [shift, setShift] = useState('Todos');
     const dropdownRef = useRef(null);
     const histogramTooltipRef = useRef(null);
 
@@ -551,7 +570,7 @@ export default function DashboardGranulometria() {
                             </Card>
                         </div>
 
-                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />}>
+                        <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={currentGranulometryData}>
@@ -567,70 +586,71 @@ export default function DashboardGranulometria() {
                         </Card>
 
 
-                        <Card title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}
-                            action={
-                                <div className="flex gap-2 items-center">
-                                    <div className="flex bg-slate-100 rounded-lg p-1">
-                                        <button
-                                            onClick={() => setBucketSize(5)}
-                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 5
-                                                ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            5 rangos
-                                        </button>
-                                        <button
-                                            onClick={() => setBucketSize(10)}
-                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 10
-                                                ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            10 rangos
-                                        </button>
-                                        <button
-                                            onClick={() => setBucketSize(20)}
-                                            className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 20
-                                                ? 'bg-white text-slate-900 shadow-sm'
-                                                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                                                }`}
-                                        >
-                                            20 rangos
-                                        </button>
-                                    </div>
+                        <Card title={normalizeByBinWidth ? "Histograma — Densidad por rango de tamaño" : "Histograma — Frecuencia por rango de tamaño"}>
+                            <div className="mb-4 flex justify-end">
+                                <ShiftSelector selectedShift={shift} onShiftChange={setShift} />
+                            </div>
+                            <div className="mb-4 flex gap-2 items-center justify-end">
+                                <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
-                                        onClick={() => setNormalizeByBinWidth(!normalizeByBinWidth)}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${normalizeByBinWidth
-                                            ? 'bg-blue-100 text-blue-900'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        onClick={() => setBucketSize(5)}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 5
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        {normalizeByBinWidth ? 'Densidad' : 'Frecuencia'}
+                                        5 rangos
                                     </button>
-                                    <div className="relative" ref={histogramTooltipRef}>
-                                        <button
-                                            onClick={() => setShowHistogramTooltip(!showHistogramTooltip)}
-                                            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
-                                            title="Información sobre el histograma"
-                                            aria-label="Información sobre el histograma"
-                                        >
-                                            <HelpCircle className="text-slate-600" size={14} />
-                                        </button>
-                                        {showHistogramTooltip && (
-                                            <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
-                                                <div className="text-xs space-y-2">
-                                                    <div className="font-medium text-slate-800">Modos del histograma</div>
-                                                    <div className="text-slate-600">
-                                                        <div>• <strong>Frecuencia (%):</strong> cuánta parte del material cae en cada rango. Suma 100%.</div>
-                                                        <div className="mt-1">• <strong>Densidad:</strong> lo mismo, pero ajustado para que el total se conserve aunque cambies la cantidad de rangos. El área total = 1.</div>
-                                                    </div>
+                                    <button
+                                        onClick={() => setBucketSize(10)}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 10
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        10 rangos
+                                    </button>
+                                    <button
+                                        onClick={() => setBucketSize(20)}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${bucketSize === 20
+                                            ? 'bg-white text-slate-900 shadow-sm'
+                                            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                            }`}
+                                    >
+                                        20 rangos
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => setNormalizeByBinWidth(!normalizeByBinWidth)}
+                                    className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${normalizeByBinWidth
+                                        ? 'bg-blue-100 text-blue-900'
+                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                                        }`}
+                                >
+                                    {normalizeByBinWidth ? 'Densidad' : 'Frecuencia'}
+                                </button>
+                                <div className="relative" ref={histogramTooltipRef}>
+                                    <button
+                                        onClick={() => setShowHistogramTooltip(!showHistogramTooltip)}
+                                        className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                        title="Información sobre el histograma"
+                                        aria-label="Información sobre el histograma"
+                                    >
+                                        <HelpCircle className="text-slate-600" size={14} />
+                                    </button>
+                                    {showHistogramTooltip && (
+                                        <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
+                                            <div className="text-xs space-y-2">
+                                                <div className="font-medium text-slate-800">Modos del histograma</div>
+                                                <div className="text-slate-600">
+                                                    <div>• <strong>Frecuencia (%):</strong> cuánta parte del material cae en cada rango. Suma 100%.</div>
+                                                    <div className="mt-1">• <strong>Densidad:</strong> lo mismo, pero ajustado para que el total se conserve aunque cambies la cantidad de rangos. El área total = 1.</div>
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
-                            }>
+                            </div>
                             <div className="h-72">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart
@@ -848,7 +868,7 @@ export default function DashboardGranulometria() {
                             </Card>
 
                             {/* Card Distribución granulométrica */}
-                            <Card title="Distribución granulométrica" icon={<Beaker className="text-slate-500" size={18} />}>
+                            <Card title="Distribución granulométrica" icon={<Beaker className="text-slate-500" size={18} />} action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
                                 <div className="h-72">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <LineChart data={currentGranulometryData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
