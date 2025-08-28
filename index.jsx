@@ -45,25 +45,77 @@ const kpis = {
 };
 
 
-const serieP80 = [
-    { hora: '09:00', p80: 41.91, p50: 27.94 },
-    { hora: '09:30', p80: 42.42, p50: 28.19 },
-    { hora: '10:00', p80: 43.18, p50: 28.70 },
-    { hora: '10:30', p80: 42.16, p50: 27.69 },
-    { hora: '11:00', p80: 41.66, p50: 27.43 },
-    { hora: '11:30', p80: 42.93, p50: 28.96 },
-    { hora: '12:00', p80: 42.67, p50: 28.45 },
-    { hora: '12:30', p80: 43.43, p50: 29.46 },
-    { hora: '13:00', p80: 43.69, p50: 29.21 },
-    { hora: '13:30', p80: 44.20, p50: 29.72 },
-    { hora: '14:00', p80: 44.45, p50: 29.97 },
-    { hora: '14:30', p80: 43.94, p50: 29.46 },
-    { hora: '15:00', p80: 42.93, p50: 28.70 },
-    { hora: '15:30', p80: 42.42, p50: 28.19 },
-    { hora: '16:00', p80: 43.18, p50: 28.96 },
-    { hora: '16:30', p80: 43.69, p50: 29.21 },
-    { hora: '17:00', p80: 42.67, p50: 28.45 }
-];
+// Mock data for different time ranges
+const mockGranulometryData = {
+    '24h': [
+        { time: '09:00', p80: 41.91, p50: 27.94 },
+        { time: '09:30', p80: 42.42, p50: 28.19 },
+        { time: '10:00', p80: 43.18, p50: 28.70 },
+        { time: '10:30', p80: 42.16, p50: 27.69 },
+        { time: '11:00', p80: 41.66, p50: 27.43 },
+        { time: '11:30', p80: 42.93, p50: 28.96 },
+        { time: '12:00', p80: 42.67, p50: 28.45 },
+        { time: '12:30', p80: 43.43, p50: 29.46 },
+        { time: '13:00', p80: 43.69, p50: 29.21 },
+        { time: '13:30', p80: 44.20, p50: 29.72 },
+        { time: '14:00', p80: 44.45, p50: 29.97 },
+        { time: '14:30', p80: 43.94, p50: 29.46 },
+        { time: '15:00', p80: 42.93, p50: 28.70 },
+        { time: '15:30', p80: 42.42, p50: 28.19 },
+        { time: '16:00', p80: 43.18, p50: 28.96 },
+        { time: '16:30', p80: 43.69, p50: 29.21 },
+        { time: '17:00', p80: 42.67, p50: 28.45 },
+        { time: '17:30', p80: 43.12, p50: 28.83 },
+        { time: '18:00', p80: 42.89, p50: 28.62 },
+        { time: '18:30', p80: 43.35, p50: 29.05 },
+        { time: '19:00', p80: 42.78, p50: 28.51 },
+        { time: '19:30', p80: 43.56, p50: 29.28 },
+        { time: '20:00', p80: 42.31, p50: 28.07 },
+        { time: '20:30', p80: 43.87, p50: 29.63 }
+    ],
+    '7d': [
+        { time: 'Día 1', p80: 42.67, p50: 28.45 },
+        { time: 'Día 2', p80: 43.12, p50: 28.83 },
+        { time: 'Día 3', p80: 42.89, p50: 28.62 },
+        { time: 'Día 4', p80: 43.45, p50: 29.15 },
+        { time: 'Día 5', p80: 42.23, p50: 28.01 },
+        { time: 'Día 6', p80: 43.78, p50: 29.52 },
+        { time: 'Día 7', p80: 43.21, p50: 28.96 }
+    ],
+    '30d': [
+        { time: 'Día 1', p80: 42.15, p50: 28.12 },
+        { time: 'Día 2', p80: 42.73, p50: 28.51 },
+        { time: 'Día 3', p80: 43.21, p50: 28.96 },
+        { time: 'Día 4', p80: 42.89, p50: 28.67 },
+        { time: 'Día 5', p80: 43.56, p50: 29.28 },
+        { time: 'Día 6', p80: 42.34, p50: 28.19 },
+        { time: 'Día 7', p80: 43.12, p50: 28.83 },
+        { time: 'Día 8', p80: 42.78, p50: 28.56 },
+        { time: 'Día 9', p80: 43.45, p50: 29.15 },
+        { time: 'Día 10', p80: 42.67, p50: 28.42 },
+        { time: 'Día 11', p80: 43.23, p50: 28.94 },
+        { time: 'Día 12', p80: 42.91, p50: 28.68 },
+        { time: 'Día 13', p80: 43.67, p50: 29.38 },
+        { time: 'Día 14', p80: 42.45, p50: 28.23 },
+        { time: 'Día 15', p80: 43.18, p50: 28.87 },
+        { time: 'Día 16', p80: 42.82, p50: 28.59 },
+        { time: 'Día 17', p80: 43.34, p50: 29.08 },
+        { time: 'Día 18', p80: 42.56, p50: 28.34 },
+        { time: 'Día 19', p80: 43.29, p50: 29.01 },
+        { time: 'Día 20', p80: 42.75, p50: 28.48 },
+        { time: 'Día 21', p80: 43.51, p50: 29.22 },
+        { time: 'Día 22', p80: 42.38, p50: 28.16 },
+        { time: 'Día 23', p80: 43.14, p50: 28.91 },
+        { time: 'Día 24', p80: 42.87, p50: 28.64 },
+        { time: 'Día 25', p80: 43.42, p50: 29.12 },
+        { time: 'Día 26', p80: 42.69, p50: 28.46 },
+        { time: 'Día 27', p80: 43.25, p50: 28.98 },
+        { time: 'Día 28', p80: 42.93, p50: 28.71 },
+        { time: 'Día 29', p80: 43.58, p50: 29.31 },
+        { time: 'Día 30', p80: 42.81, p50: 28.58 }
+    ]
+};
+
 
 
 // Curva granulométrica (maqueta): tamaño (mm) vs % acumulado
@@ -270,6 +322,13 @@ export default function DashboardGranulometria() {
     };
 
     const histogramData = generateHistogramData(bucketSize, normalizeByBinWidth);
+
+    // Get current granulometry data based on selected time period
+    const getCurrentGranulometryData = () => {
+        return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
+    };
+
+    const currentGranulometryData = getCurrentGranulometryData();
 
     const generatePDF = (periodo = '30d') => {
         const doc = new jsPDF();
@@ -644,12 +703,11 @@ export default function DashboardGranulometria() {
                         <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />}>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={serieP80}>
+                                    <LineChart data={currentGranulometryData}>
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="hora" />
+                                        <XAxis dataKey="time" />
                                         <YAxis domain={[0, 55.9]} />
                                         <Legend />
-                                        {/* <ReferenceArea y1={1.9} y2={2.2} fill="#ef4444" fillOpacity={0.12} label={{ value: 'Grande', position: 'insideTop' }} /> */}
                                         <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                         <Line type="monotone" dataKey="p50" name="P50" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                     </LineChart>
@@ -940,10 +998,9 @@ export default function DashboardGranulometria() {
                             <Card title="Distribución granulométrica" icon={<Beaker className="text-slate-500" size={18} />}>
                                 <div className="h-72">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={serieP80} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
+                                        <LineChart data={currentGranulometryData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                             <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="hora" />
-                                            {/* alien: fixed Y-axis domain to prevent line crushing */}
+                                            <XAxis dataKey="time" />
                                             <YAxis domain={[0, 56]} />
                                             <Legend />
                                             <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
