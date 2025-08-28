@@ -70,7 +70,7 @@ const AxisCaption = ({ yAxisLabel }) => (
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
     const [currentPage, setCurrentPage] = useState(1);
-    const [timePeriod, setTimePeriod] = useState('10m'); // Default for Vista Ejecutiva
+    const [timePeriod, setTimePeriod] = useState('24h'); // Default for Vista Ejecutiva
     const [selectedFormula, setSelectedFormula] = useState('swebrec');
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
@@ -100,7 +100,7 @@ export default function DashboardGranulometria() {
     // Handle tab change and set default time period per view
     useEffect(() => {
         if (activeTab === 'ejecutiva') {
-            setTimePeriod('10m');
+            setTimePeriod('24h');
         } else if (activeTab === 'tecnica') {
             setTimePeriod('30d');
         }
@@ -189,32 +189,57 @@ export default function DashboardGranulometria() {
     const histCurve = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
     const histogramData = generateHistogramData(histCurve, bucketSize, normalizeByBinWidth);
 
+    // Generate timeline labels for Ejecutiva based on period
+    const asExecTimeline = (series, period) => {
+        let targetLength, labelGenerator;
+        
+        switch (period) {
+            case '10m':
+                targetLength = 10;
+                labelGenerator = (i) => `Min ${i + 1}`;
+                break;
+            case '6h':
+                targetLength = 36; // 6h * 6 points per hour (every 10 min)
+                labelGenerator = (i) => {
+                    const totalMinutes = i * 10;
+                    const hours = Math.floor(totalMinutes / 60);
+                    const minutes = totalMinutes % 60;
+                    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                };
+                break;
+            case '24h':
+                targetLength = 24;
+                labelGenerator = (i) => `Hora ${i + 1}`;
+                break;
+            default:
+                targetLength = 24;
+                labelGenerator = (i) => `Hora ${i + 1}`;
+        }
+
+        // Normalize series to target length
+        const normalizedSeries = [];
+        const sourceLength = series.length;
+        
+        for (let i = 0; i < targetLength; i++) {
+            const sourceIndex = Math.floor((i * sourceLength) / targetLength);
+            const item = series[Math.min(sourceIndex, sourceLength - 1)];
+            
+            normalizedSeries.push({
+                time: labelGenerator(i),
+                p80: item.pct * 0.8,
+                p50: item.pct * 0.5
+            });
+        }
+        
+        return normalizedSeries;
+    };
+
     // Get current granulometry data based on selected time period
     const getCurrentGranulometryData = () => {
         if (activeTab === 'ejecutiva') {
-            // In Ejecutiva view, use curvaGranByPeriod data and format X-axis labels
-            const baseData = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
-            return baseData.map((item, index) => {
-                let timeLabel;
-                switch (timePeriod) {
-                    case '24h':
-                        timeLabel = `Hora ${index + 1}`;
-                        break;
-                    case '6h':
-                        timeLabel = `H${index + 1}`;
-                        break;
-                    case '10m':
-                        timeLabel = `Min ${index + 1}`;
-                        break;
-                    default:
-                        timeLabel = `Hora ${index + 1}`;
-                }
-                return {
-                    time: timeLabel,
-                    p80: item.pct * 0.8, // Convert to approximate P80 value
-                    p50: item.pct * 0.5  // Convert to approximate P50 value
-                };
-            });
+            // In Ejecutiva view, use curvaGranByPeriod data with proper timeline
+            const baseSeries = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
+            return asExecTimeline(baseSeries, timePeriod);
         } else {
             // In Técnica view, use original mockGranulometryData
             return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
@@ -472,13 +497,13 @@ export default function DashboardGranulometria() {
                             <div className="relative">
                                 <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
-                                        onClick={() => setTimePeriod('10m')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '10m'
+                                        onClick={() => setTimePeriod('24h')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        10m
+                                        24h
                                     </button>
                                     <button
                                         onClick={() => setTimePeriod('6h')}
@@ -490,13 +515,13 @@ export default function DashboardGranulometria() {
                                         6h
                                     </button>
                                     <button
-                                        onClick={() => setTimePeriod('24h')}
-                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
+                                        onClick={() => setTimePeriod('10m')}
+                                        className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '10m'
                                             ? 'bg-white text-slate-900 shadow-sm'
                                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                                             }`}
                                     >
-                                        24h
+                                        10m
                                     </button>
                                 </div>
                             </div>
