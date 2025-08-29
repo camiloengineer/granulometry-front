@@ -20,13 +20,12 @@ import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaG
 // ===== UI helpers =====
 const ShiftSelector = ({ selectedShift, onShiftChange }) => (
     <div className="flex bg-slate-100 rounded-lg p-1" role="radiogroup" aria-label="Turnos">
-        {['Todos','A','B','C','D'].map((shiftLetter) => (
+        {['Todos', 'A', 'B', 'C', 'D'].map((shiftLetter) => (
             <button
                 key={shiftLetter}
                 onClick={() => onShiftChange(shiftLetter)}
-                className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${
-                    selectedShift === shiftLetter ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                }`}
+                className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${selectedShift === shiftLetter ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
             >
                 {shiftLetter === 'Todos' ? 'Todos' : `Turno ${shiftLetter}`}
             </button>
@@ -142,15 +141,15 @@ export default function DashboardGranulometria() {
             setDateRangeError('Por favor selecciona las fechas desde y hasta');
             return;
         }
-        
+
         const fromDateTime = new Date(customFromDate + (customFromTime ? `T${customFromTime}` : 'T00:00'));
         const toDateTime = new Date(customToDate + (customToTime ? `T${customToTime}` : 'T23:59'));
-        
+
         if (fromDateTime > toDateTime) {
             setDateRangeError('La fecha desde debe ser anterior a la fecha hasta');
             return;
         }
-        
+
         setDateRangeError('');
         setShowCustomRange(false);
     };
@@ -229,7 +228,7 @@ export default function DashboardGranulometria() {
     // Generate timeline labels for Ejecutiva based on period
     const asExecTimeline = (series, period) => {
         let targetLength, labelGenerator;
-        
+
         switch (period) {
             case '10m':
                 targetLength = 10;
@@ -256,18 +255,18 @@ export default function DashboardGranulometria() {
         // Normalize series to target length
         const normalizedSeries = [];
         const sourceLength = series.length;
-        
+
         for (let i = 0; i < targetLength; i++) {
             const sourceIndex = Math.floor((i * sourceLength) / targetLength);
             const item = series[Math.min(sourceIndex, sourceLength - 1)];
-            
+
             normalizedSeries.push({
                 time: labelGenerator(i),
                 p80: item.pct * 0.8,
                 p50: item.pct * 0.5
             });
         }
-        
+
         return normalizedSeries;
     };
 
@@ -281,6 +280,40 @@ export default function DashboardGranulometria() {
             // In Técnica view, use original mockGranulometryData
             return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
         }
+    };
+
+    // Generate date/time range string based on current period
+    const getDateTimeRange = () => {
+        const now = new Date();
+        let fromDate;
+        
+        if (activeTab === 'ejecutiva') {
+            switch (timePeriod) {
+                case '10m':
+                    fromDate = new Date(now.getTime() - 10 * 60 * 1000);
+                    break;
+                case '6h':
+                    fromDate = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+                    break;
+                case '24h':
+                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    break;
+            }
+        } else {
+            switch (timePeriod) {
+                case '30d':
+                    fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case '7d':
+                    fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case '24h':
+                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    break;
+            }
+        }
+        
+        return `${fromDate.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} – ${now.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
     };
 
     const currentGranulometryData = getCurrentGranulometryData();
@@ -489,7 +522,7 @@ export default function DashboardGranulometria() {
                         </div>
                         <div className="flex gap-2">
                             <button
-                                onClick={() => {}}
+                                onClick={() => { }}
                                 className="bg-white rounded-lg p-2 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors"
                             >
                                 <RefreshCcw className="text-slate-500" size={16} />
@@ -504,23 +537,23 @@ export default function DashboardGranulometria() {
                                     <span className="text-slate-700 text-sm font-medium">Fórmula: {formulas[selectedFormula].name}</span>
                                     <ChevronDown className="text-slate-500" size={14} />
                                 </button>
-                            {showFormulaDropdown && (
-                                <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-80 z-50">
-                                    {Object.entries(formulas).map(([key, formula]) => (
-                                        <button
-                                            key={key}
-                                            onClick={() => {
-                                                setSelectedFormula(key);
-                                                setShowFormulaDropdown(false);
-                                            }}
-                                            className={`w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${selectedFormula === key ? 'bg-slate-50' : ''
-                                                }`}
-                                        >
-                                            <div className="font-medium text-slate-800">{formula.name}</div>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                                {showFormulaDropdown && (
+                                    <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-80 z-50">
+                                        {Object.entries(formulas).map(([key, formula]) => (
+                                            <button
+                                                key={key}
+                                                onClick={() => {
+                                                    setSelectedFormula(key);
+                                                    setShowFormulaDropdown(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${selectedFormula === key ? 'bg-slate-50' : ''
+                                                    }`}
+                                            >
+                                                <div className="font-medium text-slate-800">{formula.name}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -539,8 +572,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo ejecutivo</Badge>
                             </div>
 
-                            <div className="relative">
-                                <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
+                            <div >
+                                <div className=" top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('24h')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
@@ -641,8 +674,8 @@ export default function DashboardGranulometria() {
                                 </div>
                             </Card>
                             <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
-                                <div className="flex items-center justify-center">
-                                    <button 
+                                <div className="flex items-center justify-center mt-4">
+                                    <button
                                         onClick={() => setShowCustomRange(true)}
                                         className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
                                     >
@@ -653,6 +686,7 @@ export default function DashboardGranulometria() {
                         </div>
 
                         <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={activeTab === 'ejecutiva' && timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
+                            <div className="text-xs text-slate-500 mb-4">{getDateTimeRange()}</div>
                             <div className="h-64">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={currentGranulometryData}>
@@ -838,8 +872,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo experto</Badge>
                             </div>
 
-                            <div className="relative">
-                                <div className="sticky top-2 z-20 flex bg-slate-100 rounded-lg p-1">
+                            <div >
+                                <div className="top-2 z-20 flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('30d')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
@@ -949,8 +983,8 @@ export default function DashboardGranulometria() {
                                 </div>
                             </Card>
                             <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
-                                <div className="flex items-center justify-center">
-                                    <button 
+                                <div className="flex items-center justify-center mt-4">
+                                    <button
                                         onClick={() => setShowCustomRange(true)}
                                         className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
                                     >
@@ -1039,6 +1073,7 @@ export default function DashboardGranulometria() {
 
                             {/* Card Distribución granulométrica */}
                             <Card title="Distribución granulométrica" icon={<Beaker className="text-slate-500" size={18} />} action={<ShiftSelector selectedShift={shift} onShiftChange={setShift} />}>
+                                <div className="text-xs text-slate-500 mb-4">{getDateTimeRange()}</div>
                                 <div className="h-72">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <LineChart data={currentGranulometryData} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
@@ -1190,13 +1225,13 @@ export default function DashboardGranulometria() {
             {showCustomRange && (
                 <>
                     {/* Overlay */}
-                    <div 
+                    <div
                         className="fixed inset-0 bg-slate-900/30 z-40"
                         onClick={() => setShowCustomRange(false)}
                     />
-                    
+
                     {/* Sidebar */}
-                    <aside 
+                    <aside
                         className="fixed right-0 top-0 h-screen w-[360px] bg-white shadow-xl border-l z-50 flex flex-col"
                         role="dialog"
                         aria-modal="true"
@@ -1207,7 +1242,7 @@ export default function DashboardGranulometria() {
                             <h2 id="custom-date-title" className="text-lg font-semibold text-slate-800">
                                 Fecha personalizada
                             </h2>
-                            <button 
+                            <button
                                 onClick={() => setShowCustomRange(false)}
                                 className="p-1 hover:bg-slate-100 rounded-full transition-colors"
                                 aria-label="Cerrar"
@@ -1232,9 +1267,8 @@ export default function DashboardGranulometria() {
                                             setCustomFromDate(e.target.value);
                                             setDateRangeError('');
                                         }}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                            dateRangeError ? 'border-red-300' : 'border-slate-300'
-                                        }`}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                            }`}
                                     />
                                 </div>
 
@@ -1250,9 +1284,8 @@ export default function DashboardGranulometria() {
                                             setCustomToDate(e.target.value);
                                             setDateRangeError('');
                                         }}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                            dateRangeError ? 'border-red-300' : 'border-slate-300'
-                                        }`}
+                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                            }`}
                                     />
                                 </div>
 
@@ -1292,9 +1325,9 @@ export default function DashboardGranulometria() {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Turno
                                     </label>
-                                    <ShiftSelector 
-                                        selectedShift={customShift} 
-                                        onShiftChange={setCustomShift} 
+                                    <ShiftSelector
+                                        selectedShift={customShift}
+                                        onShiftChange={setCustomShift}
                                     />
                                 </div>
 
@@ -1310,20 +1343,20 @@ export default function DashboardGranulometria() {
                         {/* Sticky Footer with CTAs */}
                         <div className="sticky bottom-0 bg-white border-t p-4 space-y-3">
                             <div className="grid grid-cols-2 gap-2">
-                                <button 
+                                <button
                                     onClick={handleCustomDateSearch}
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                                 >
                                     Buscar
                                 </button>
-                                <button 
+                                <button
                                     onClick={handleDownloadCustomReport}
                                     className="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
                                 >
                                     Descargar reporte
                                 </button>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setShowCustomRange(false)}
                                 className="w-full text-slate-600 hover:text-slate-800 py-2 text-sm transition-colors"
                             >
