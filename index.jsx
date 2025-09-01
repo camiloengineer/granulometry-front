@@ -231,7 +231,7 @@ export default function DashboardGranulometria() {
 
         switch (period) {
             case '10m':
-                targetLength = 10;
+                targetLength = 10; // Keep 10 points for line visibility
                 labelGenerator = (i) => `Min ${i + 1}`;
                 break;
             case '6h':
@@ -256,15 +256,34 @@ export default function DashboardGranulometria() {
         const normalizedSeries = [];
         const sourceLength = series.length;
 
-        for (let i = 0; i < targetLength; i++) {
-            const sourceIndex = Math.floor((i * sourceLength) / targetLength);
-            const item = series[Math.min(sourceIndex, sourceLength - 1)];
+        if (period === '10m') {
+            // For 10m period, create a line break at minute 5 showing single detection
+            const centralItem = series[Math.floor(sourceLength / 2)];
+            const p80Detection = centralItem.pct * 0.8;
+            const p50Detection = centralItem.pct * 0.5;
+            
+            // Create baseline values (before detection)
+            const p80Baseline = p80Detection * 0.85; // Slightly lower baseline
+            const p50Baseline = p50Detection * 0.85;
 
-            normalizedSeries.push({
-                time: labelGenerator(i),
-                p80: item.pct * 0.8,
-                p50: item.pct * 0.5
-            });
+            for (let i = 0; i < targetLength; i++) {
+                normalizedSeries.push({
+                    time: labelGenerator(i),
+                    p80: i < 4 ? p80Baseline : p80Detection, // Break at minute 5 (index 4)
+                    p50: i < 4 ? p50Baseline : p50Detection
+                });
+            }
+        } else {
+            for (let i = 0; i < targetLength; i++) {
+                const sourceIndex = Math.floor((i * sourceLength) / targetLength);
+                const item = series[Math.min(sourceIndex, sourceLength - 1)];
+
+                normalizedSeries.push({
+                    time: labelGenerator(i),
+                    p80: item.pct * 0.8,
+                    p50: item.pct * 0.5
+                });
+            }
         }
 
         return normalizedSeries;
@@ -572,8 +591,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo ejecutivo</Badge>
                             </div>
 
-                            <div >
-                                <div className=" top-2 z-20 flex bg-slate-100 rounded-lg p-1">
+                            <div>
+                                <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('24h')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '24h'
@@ -872,8 +891,8 @@ export default function DashboardGranulometria() {
                                 <Badge tone="info">Modo experto</Badge>
                             </div>
 
-                            <div >
-                                <div className="top-2 z-20 flex bg-slate-100 rounded-lg p-1">
+                            <div>
+                                <div className="flex bg-slate-100 rounded-lg p-1">
                                     <button
                                         onClick={() => setTimePeriod('30d')}
                                         className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${timePeriod === '30d'
