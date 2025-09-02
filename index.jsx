@@ -145,6 +145,11 @@ export default function DashboardGranulometria() {
         const fromDateTime = new Date(customFromDate + (customFromTime ? `T${customFromTime}` : 'T00:00'));
         const toDateTime = new Date(customToDate + (customToTime ? `T${customToTime}` : 'T23:59'));
 
+        if (isNaN(fromDateTime.getTime()) || isNaN(toDateTime.getTime())) {
+            setDateRangeError('Las fechas seleccionadas no son válidas');
+            return;
+        }
+
         if (fromDateTime > toDateTime) {
             setDateRangeError('La fecha desde debe ser anterior a la fecha hasta');
             return;
@@ -317,6 +322,9 @@ export default function DashboardGranulometria() {
                 case '24h':
                     fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
                     break;
+                default:
+                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    break;
             }
         } else {
             switch (timePeriod) {
@@ -327,6 +335,9 @@ export default function DashboardGranulometria() {
                     fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
                     break;
                 case '24h':
+                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                    break;
+                default:
                     fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
                     break;
             }
