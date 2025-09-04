@@ -65,7 +65,7 @@ const AxisCaption = ({ yAxisLabel }) => (
     </div>
 );
 
-const CustomDateCard = ({ selectedMonth, setSelectedMonth, showMonthDropdown, setShowMonthDropdown, setShowCustomRange, generatePDF, showDownloadButton = false }) => (
+const CustomDateCard = ({ selectedMonth, setSelectedMonth, showMonthDropdown, setShowMonthDropdown, setShowCustomRange, generatePDF, showDownloadButton = false, monthDropdownRef }) => (
     <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
         <div className="space-y-3">
             <div className="flex items-center justify-end">
@@ -77,7 +77,7 @@ const CustomDateCard = ({ selectedMonth, setSelectedMonth, showMonthDropdown, se
                 </button>
             </div>
             <div className="flex items-center justify-end mt-4">
-                <div className="relative">
+                <div className="relative" ref={monthDropdownRef}>
                     <button
                         onClick={() => setShowMonthDropdown(!showMonthDropdown)}
                         className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
@@ -182,6 +182,7 @@ export default function DashboardGranulometria() {
     const [dateRangeError, setDateRangeError] = useState('');
     const dropdownRef = useRef(null);
     const histogramTooltipRef = useRef(null);
+    const monthDropdownRef = useRef(null);
 
     const formulas = {
         swebrec: {
@@ -216,6 +217,9 @@ export default function DashboardGranulometria() {
             }
             if (histogramTooltipRef.current && !histogramTooltipRef.current.contains(event.target)) {
                 setShowHistogramTooltip(false);
+            }
+            if (monthDropdownRef.current && !monthDropdownRef.current.contains(event.target)) {
+                setShowMonthDropdown(false);
             }
         };
 
@@ -814,6 +818,7 @@ export default function DashboardGranulometria() {
                                 setShowCustomRange={setShowCustomRange}
                                 generatePDF={generatePDF}
                                 showDownloadButton={true}
+                                monthDropdownRef={monthDropdownRef}
                             />
                         </div>
 
@@ -1122,6 +1127,7 @@ export default function DashboardGranulometria() {
                                 setShowCustomRange={setShowCustomRange}
                                 generatePDF={generatePDF}
                                 showDownloadButton={true}
+                                monthDropdownRef={monthDropdownRef}
                             />
                         </div>
 
