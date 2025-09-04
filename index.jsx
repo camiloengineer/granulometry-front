@@ -19,7 +19,7 @@ import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaG
 
 // ===== UI helpers =====
 const ShiftSelector = ({ selectedShift, onShiftChange }) => (
-    <div className="flex bg-slate-100 rounded-lg p-1" role="radiogroup" aria-label="Turnos">
+    <div className="flex gap-2 bg-slate-100 rounded-lg p-1 inline-block max-w-[250px]" role="radiogroup" aria-label="Turnos">
         {['Todos', 'A', 'B', 'C', 'D'].map((shiftLetter) => (
             <button
                 key={shiftLetter}
@@ -27,7 +27,7 @@ const ShiftSelector = ({ selectedShift, onShiftChange }) => (
                 className={`h-8 px-3 rounded-md text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300 ${selectedShift === shiftLetter ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
             >
-                {shiftLetter === 'Todos' ? 'Todos' : `Turno ${shiftLetter}`}
+                {shiftLetter === 'Todos' ? 'Todos' : `${shiftLetter}`}
             </button>
         ))}
     </div>
@@ -731,7 +731,7 @@ export default function DashboardGranulometria() {
                                             onClick={() => setShowCustomRange(true)}
                                             className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
                                         >
-                                            Fecha y hora de mes actual
+                                            Fechas del mes actual
                                         </button>
                                     </div>
                                     <div className="flex items-center justify-end mt-4">
@@ -775,15 +775,6 @@ export default function DashboardGranulometria() {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-                                    <div className="mt-3 pt-3 border-t border-slate-200">
-                                        <button
-                                            className="flex items-center gap-2 text-sm text-slate-400 cursor-not-allowed"
-                                            disabled
-                                        >
-                                            <Download size={14} />
-                                            <span>Descargar reporte</span>
-                                        </button>
                                     </div>
                                 </div>
                             </Card>
@@ -1088,23 +1079,55 @@ export default function DashboardGranulometria() {
                             </Card>
                             <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
                                 <div className="space-y-3">
-
-                                    <div className="flex items-center justify-center mt-4">
+                                    <div className="flex items-center justify-end">
                                         <button
                                             onClick={() => setShowCustomRange(true)}
                                             className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
                                         >
-                                            Fecha personalizada
+                                            Fechas del mes actual
                                         </button>
                                     </div>
-                                    <div className="mt-3 pt-3 border-t border-slate-200">
-                                        <button
-                                            className="flex items-center gap-2 text-sm text-slate-400 cursor-not-allowed"
-                                            disabled
-                                        >
-                                            <Download size={14} />
-                                            <span>Descargar reporte</span>
-                                        </button>
+                                    <div className="flex items-center justify-end mt-4">
+                                        <div className="relative">
+                                            <button
+                                                onClick={() => setShowMonthDropdown(!showMonthDropdown)}
+                                                className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
+                                            >
+                                                <span className="text-slate-700 text-sm font-medium">{selectedMonth}</span>
+                                                <ChevronDown className="text-slate-500" size={14} />
+                                            </button>
+                                            {showMonthDropdown && (
+                                                <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-full z-50">
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedMonth('Agosto 2025');
+                                                            setShowMonthDropdown(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg"
+                                                    >
+                                                        <div className="font-medium text-slate-800">Agosto 2025</div>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedMonth('Julio 2025');
+                                                            setShowMonthDropdown(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
+                                                    >
+                                                        <div className="font-medium text-slate-800">Julio 2025</div>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedMonth('Junio 2025');
+                                                            setShowMonthDropdown(false);
+                                                        }}
+                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors last:rounded-b-lg"
+                                                    >
+                                                        <div className="font-medium text-slate-800">Junio 2025</div>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </Card>
@@ -1348,7 +1371,7 @@ export default function DashboardGranulometria() {
 
                     {/* Sidebar */}
                     <aside
-                        className="fixed right-0 top-0 h-screen w-[360px] bg-white shadow-xl border-l z-50 flex flex-col"
+                        className="fixed right-0 top-0 h-screen w-[460px] bg-white shadow-xl border-l z-50 flex flex-col"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="custom-date-title"
@@ -1371,44 +1394,24 @@ export default function DashboardGranulometria() {
                         <div className="flex-1 overflow-y-auto px-4">
                             <div className="space-y-4">
                                 {/* Date Fields - One below the other */}
-                                <div>
-                                    <label htmlFor="fecha-desde" className="block text-sm font-medium text-slate-700 mb-1">
-                                        Fecha desde
-                                    </label>
-                                    <input
-                                        id="fecha-desde"
-                                        type="text"
-                                        placeholder="dd/mm/yyyy"
-                                        value={customFromDate}
-                                        onChange={(e) => {
-                                            setCustomFromDate(e.target.value);
-                                            setDateRangeError('');
-                                        }}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
-                                            }`}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label htmlFor="fecha-hasta" className="block text-sm font-medium text-slate-700 mb-1">
-                                        Fecha hasta
-                                    </label>
-                                    <input
-                                        id="fecha-hasta"
-                                        type="text"
-                                        placeholder="dd/mm/yyyy"
-                                        value={customToDate}
-                                        onChange={(e) => {
-                                            setCustomToDate(e.target.value);
-                                            setDateRangeError('');
-                                        }}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
-                                            }`}
-                                    />
-                                </div>
-
-                                {/* Time Fields - Grid 2 columns */}
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className='grid grid-cols-2 gap-3'>
+                                    <div>
+                                        <label htmlFor="fecha-desde" className="block text-sm font-medium text-slate-700 mb-1">
+                                            Fecha desde
+                                        </label>
+                                        <input
+                                            id="fecha-desde"
+                                            type="text"
+                                            placeholder="dd/mm/yyyy"
+                                            value={customFromDate}
+                                            onChange={(e) => {
+                                                setCustomFromDate(e.target.value);
+                                                setDateRangeError('');
+                                            }}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                                }`}
+                                        />
+                                    </div>
                                     <div>
                                         <label htmlFor="hora-desde" className="block text-sm font-medium text-slate-700 mb-1">
                                             Hora desde
@@ -1420,6 +1423,23 @@ export default function DashboardGranulometria() {
                                             value={customFromTime}
                                             onChange={(e) => setCustomFromTime(e.target.value)}
                                             className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="fecha-hasta" className="block text-sm font-medium text-slate-700 mb-1">
+                                            Fecha hasta
+                                        </label>
+                                        <input
+                                            id="fecha-hasta"
+                                            type="text"
+                                            placeholder="dd/mm/yyyy"
+                                            value={customToDate}
+                                            onChange={(e) => {
+                                                setCustomToDate(e.target.value);
+                                                setDateRangeError('');
+                                            }}
+                                            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${dateRangeError ? 'border-red-300' : 'border-slate-300'
+                                                }`}
                                         />
                                     </div>
 
@@ -1437,6 +1457,7 @@ export default function DashboardGranulometria() {
                                         />
                                     </div>
                                 </div>
+
 
                                 {/* Shift Selector */}
                                 <div>
@@ -1471,7 +1492,7 @@ export default function DashboardGranulometria() {
                                     onClick={handleDownloadCustomReport}
                                     className="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors"
                                 >
-                                    Descargar
+                                    Descargar Reporte
                                 </button>
                             </div>
                         </div>
