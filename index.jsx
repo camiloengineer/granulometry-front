@@ -65,6 +65,88 @@ const AxisCaption = ({ yAxisLabel }) => (
     </div>
 );
 
+const CustomDateCard = ({ selectedMonth, setSelectedMonth, showMonthDropdown, setShowMonthDropdown, setShowCustomRange, generatePDF, showDownloadButton = false }) => (
+    <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
+        <div className="space-y-3">
+            <div className="flex items-center justify-end">
+                <button
+                    onClick={() => setShowCustomRange(true)}
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                    Fechas del mes actual
+                </button>
+            </div>
+            <div className="flex items-center justify-end mt-4">
+                <div className="relative">
+                    <button
+                        onClick={() => setShowMonthDropdown(!showMonthDropdown)}
+                        className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
+                    >
+                        <span className="text-slate-700 text-sm font-medium">{selectedMonth}</span>
+                        <ChevronDown className="text-slate-500" size={14} />
+                    </button>
+                    {showMonthDropdown && (
+                        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-full z-50">
+                            <button
+                                onClick={() => {
+                                    setSelectedMonth('Seleccionar periodo');
+                                    setShowMonthDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg"
+                            >
+                                <div className="font-medium text-slate-800">Seleccionar periodo</div>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setSelectedMonth('Agosto 2025');
+                                    setShowMonthDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
+                            >
+                                <div className="font-medium text-slate-800">Agosto 2025</div>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setSelectedMonth('Julio 2025');
+                                    setShowMonthDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
+                            >
+                                <div className="font-medium text-slate-800">Julio 2025</div>
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setSelectedMonth('Junio 2025');
+                                    setShowMonthDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors last:rounded-b-lg"
+                            >
+                                <div className="font-medium text-slate-800">Junio 2025</div>
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+            {showDownloadButton && (
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                    <button
+                        onClick={() => generatePDF('24h')}
+                        className={`flex items-center gap-2 text-sm transition-colors ${
+                            selectedMonth !== 'Seleccionar periodo' 
+                                ? 'text-blue-600 hover:text-blue-800' 
+                                : 'text-gray-600'
+                        }`}
+                        disabled={selectedMonth === 'Seleccionar periodo'}
+                    >
+                        <Download size={14} />
+                        <span>Descargar reporte</span>
+                    </button>
+                </div>
+            )}
+        </div>
+    </Card>
+);
+
 
 export default function DashboardGranulometria() {
     const [activeTab, setActiveTab] = useState('ejecutiva');
@@ -78,7 +160,7 @@ export default function DashboardGranulometria() {
     const [shift, setShift] = useState('Todos');
     const [showCustomRange, setShowCustomRange] = useState(false);
     const [showMonthDropdown, setShowMonthDropdown] = useState(false);
-    const [selectedMonth, setSelectedMonth] = useState('Seleccionar periodo anterior');
+    const [selectedMonth, setSelectedMonth] = useState('Seleccionar periodo');
     const [customFromDate, setCustomFromDate] = useState(() => {
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -724,60 +806,15 @@ export default function DashboardGranulometria() {
                                     </div>
                                 </div>
                             </Card>
-                            <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-end">
-                                        <button
-                                            onClick={() => setShowCustomRange(true)}
-                                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
-                                        >
-                                            Fechas del mes actual
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center justify-end mt-4">
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-                                                className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
-                                            >
-                                                <span className="text-slate-700 text-sm font-medium">{selectedMonth}</span>
-                                                <ChevronDown className="text-slate-500" size={14} />
-                                            </button>
-                                            {showMonthDropdown && (
-                                                <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-full z-50">
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Agosto 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Agosto 2025</div>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Julio 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Julio 2025</div>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Junio 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors last:rounded-b-lg"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Junio 2025</div>
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card>
+                            <CustomDateCard 
+                                selectedMonth={selectedMonth}
+                                setSelectedMonth={setSelectedMonth}
+                                showMonthDropdown={showMonthDropdown}
+                                setShowMonthDropdown={setShowMonthDropdown}
+                                setShowCustomRange={setShowCustomRange}
+                                generatePDF={generatePDF}
+                                showDownloadButton={true}
+                            />
                         </div>
 
                         <Card title="Distribución granulométrica" icon={<TrendingUp className="text-slate-500" size={18} />} action={activeTab === 'ejecutiva' && timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
@@ -1077,60 +1114,15 @@ export default function DashboardGranulometria() {
                                     </div>
                                 </div>
                             </Card>
-                            <Card title="Fecha personalizada" icon={<Clock className="text-slate-500" size={18} />}>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-end">
-                                        <button
-                                            onClick={() => setShowCustomRange(true)}
-                                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
-                                        >
-                                            Fechas del mes actual
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center justify-end mt-4">
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-                                                className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-2 hover:bg-slate-50 transition-colors"
-                                            >
-                                                <span className="text-slate-700 text-sm font-medium">{selectedMonth}</span>
-                                                <ChevronDown className="text-slate-500" size={14} />
-                                            </button>
-                                            {showMonthDropdown && (
-                                                <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 min-w-full z-50">
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Agosto 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors first:rounded-t-lg"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Agosto 2025</div>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Julio 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Julio 2025</div>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setSelectedMonth('Junio 2025');
-                                                            setShowMonthDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors last:rounded-b-lg"
-                                                    >
-                                                        <div className="font-medium text-slate-800">Junio 2025</div>
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card>
+                            <CustomDateCard 
+                                selectedMonth={selectedMonth}
+                                setSelectedMonth={setSelectedMonth}
+                                showMonthDropdown={showMonthDropdown}
+                                setShowMonthDropdown={setShowMonthDropdown}
+                                setShowCustomRange={setShowCustomRange}
+                                generatePDF={generatePDF}
+                                showDownloadButton={true}
+                            />
                         </div>
 
                         <div className="space-y-4">
