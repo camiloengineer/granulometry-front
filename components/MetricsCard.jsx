@@ -38,7 +38,7 @@ const MetricsCard = ({ period, resumen, isSelected = false }) => {
             title={config.title}
             icon={config.icon}
             className={`cursor-pointer transition-all duration-200 ${isSelected
-                ? 'border-2 border-blue-500 bg-blue-100'
+                ? '!border-2 !border-blue-500 bg-blue-100'
                 : 'hover:bg-blue-50 hover:border-blue-300'
             }`}
         >
