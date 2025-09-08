@@ -32,6 +32,8 @@ export default function DashboardGranulometria() {
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
     const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
+    const [showDistributionTooltip, setShowDistributionTooltip] = useState(false);
+    const [showCurveTooltip, setShowCurveTooltip] = useState(false);
     const [shift, setShift] = useState('Todos');
     const [showCustomRange, setShowCustomRange] = useState(false);
     const [showMonthDropdown, setShowMonthDropdown] = useState(false);
@@ -57,9 +59,34 @@ export default function DashboardGranulometria() {
     const [dateRangeError, setDateRangeError] = useState('');
     const dropdownRef = useRef(null);
     const histogramTooltipRef = useRef(null);
+    const distributionTooltipRef = useRef(null);
+    const curveTooltipRef = useRef(null);
     const monthDropdownRef = useRef(null);
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
+
+    // Handle click outside to close tooltips
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (distributionTooltipRef.current && !distributionTooltipRef.current.contains(event.target)) {
+                setShowDistributionTooltip(false);
+            }
+            if (curveTooltipRef.current && !curveTooltipRef.current.contains(event.target)) {
+                setShowCurveTooltip(false);
+            }
+            if (histogramTooltipRef.current && !histogramTooltipRef.current.contains(event.target)) {
+                setShowHistogramTooltip(false);
+            }
+        };
+
+        if (showDistributionTooltip || showCurveTooltip || showHistogramTooltip) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showDistributionTooltip, showCurveTooltip, showHistogramTooltip]);
 
     const handleCustomDateSearch = () => {
         if (!customFromDate || !customToDate) {
@@ -477,7 +504,29 @@ export default function DashboardGranulometria() {
                     </div>
 
                     <Card>
-                        <div className="text-xs text-slate-500 mb-2">{getDateTimeRange()}</div>
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="text-xs text-slate-500">{getDateTimeRange()}</div>
+                            <div className="relative" ref={distributionTooltipRef}>
+                                <button
+                                    onClick={() => setShowDistributionTooltip(!showDistributionTooltip)}
+                                    className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                    title="Información sobre distribución granulométrica"
+                                    aria-label="Información sobre distribución granulométrica"
+                                >
+                                    <HelpCircle className="text-slate-600" size={14} />
+                                </button>
+                                {showDistributionTooltip && (
+                                    <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
+                                        <div className="text-xs space-y-2">
+                                            <div className="font-medium text-slate-800">Distribución granulométrica</div>
+                                            <div className="text-slate-600">
+                                                <div>Muestra la evolución temporal de los percentiles P80 y P50, indicadores clave del tamaño de partículas en el material procesado.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={currentGranulometryData}>
@@ -498,6 +547,28 @@ export default function DashboardGranulometria() {
                     </div>
 
                     <Card>
+                        <div className="flex items-center justify-end mb-2">
+                            <div className="relative" ref={curveTooltipRef}>
+                                <button
+                                    onClick={() => setShowCurveTooltip(!showCurveTooltip)}
+                                    className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-300"
+                                    title="Información sobre curva granulométrica"
+                                    aria-label="Información sobre curva granulométrica"
+                                >
+                                    <HelpCircle className="text-slate-600" size={14} />
+                                </button>
+                                {showCurveTooltip && (
+                                    <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
+                                        <div className="text-xs space-y-2">
+                                            <div className="font-medium text-slate-800">Curva granulométrica</div>
+                                            <div className="text-slate-600">
+                                                <div>Representa el porcentaje acumulado de material que pasa por cada tamaño, fundamental para caracterizar la distribución del tamaño de partículas.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                         <Badge tone="info">Fórmula Swebrec</Badge>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Tabla Percent Passing */}
@@ -621,9 +692,9 @@ export default function DashboardGranulometria() {
                                 {showHistogramTooltip && (
                                     <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 p-4 w-80 z-50" aria-live="polite">
                                         <div className="text-xs space-y-2">
-                                            <div className="font-medium text-slate-800">Frecuencia por tamaños</div>
+                                            <div className="font-medium text-slate-800">Histograma</div>
                                             <div className="text-slate-600">
-                                                <div><strong>Frecuencia (%):</strong> El histograma muestra la distribución granulométrica del material, indicando cuánta parte del total cae en cada rango de tamaño. La suma de todas las frecuencias es 100%.</div>
+                                                <div>El histograma muestra la distribución granulométrica del material, indicando cuánta parte del total cae en cada rango de tamaño. La suma de todas las frecuencias es 100%.</div>
                                             </div>
                                         </div>
                                     </div>
@@ -649,10 +720,9 @@ export default function DashboardGranulometria() {
                                     />
                                     <Tooltip
                                         formatter={(value) => [
-                                            `${value.toFixed(1)}%`,
-                                            'Frecuencia'
+                                            `${value.toFixed(1)}%`
                                         ]}
-                                        labelFormatter={(size) => `Tamaño: ${size} mm`}
+                                        labelFormatter={(size) => `${size} mm`}
                                         contentStyle={{
                                             backgroundColor: 'white',
                                             border: '1px solid #e2e8f0',
