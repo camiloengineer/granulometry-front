@@ -1026,7 +1026,7 @@ export default function DashboardGranulometria() {
 
                         {/* Sticky Footer with CTAs */}
                         <div className="sticky bottom-0 bg-white border-t p-4 space-y-3">
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="flex justify-center">
                                 <button
                                     onClick={handleCustomDateSearch}
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
