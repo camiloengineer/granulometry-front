@@ -29,6 +29,7 @@ export default function DashboardGranulometria() {
     const totalSamples = 20;
     const totalPages = totalSamples;
     const [timePeriod, setTimePeriod] = useState('10m');
+    const [customDateSelected, setCustomDateSelected] = useState(false);
     const [showFormulaDropdown, setShowFormulaDropdown] = useState(false);
     const [bucketSize, setBucketSize] = useState(20);
     const [showHistogramTooltip, setShowHistogramTooltip] = useState(false);
@@ -115,6 +116,8 @@ export default function DashboardGranulometria() {
 
         setDateRangeError('');
         setShowCustomRange(false);
+        setCustomDateSelected(true);
+        setTimePeriod('');
     };
 
     const handleDownloadCustomReport = () => {
@@ -464,7 +467,10 @@ export default function DashboardGranulometria() {
                             title="Últimos 10 minutos"
                             icon={<Gauge className="text-slate-500" size={18} />}
                             isActive={timePeriod === '10m'}
-                            onClick={setTimePeriod}
+                            onClick={(period) => {
+                                setTimePeriod(period);
+                                setCustomDateSelected(false);
+                            }}
                             p80={kpis.p80Actual.toFixed(2)}
                             p50={kpis.p50Actual.toFixed(2)}
                         />
@@ -473,7 +479,10 @@ export default function DashboardGranulometria() {
                             title="Últimas 6 horas"
                             icon={<Activity className="text-slate-500" size={18} />}
                             isActive={timePeriod === '6h'}
-                            onClick={setTimePeriod}
+                            onClick={(period) => {
+                                setTimePeriod(period);
+                                setCustomDateSelected(false);
+                            }}
                             p80={resumen.ult24h.p80.valor}
                             p50={resumen.ult24h.p50.valor}
                         />
@@ -482,7 +491,10 @@ export default function DashboardGranulometria() {
                             title="Últimas 24 horas"
                             icon={<Clock className="text-slate-500" size={18} />}
                             isActive={timePeriod === '24h'}
-                            onClick={setTimePeriod}
+                            onClick={(period) => {
+                                setTimePeriod(period);
+                                setCustomDateSelected(false);
+                            }}
                             p80={resumen.ult24h.p80.valor}
                             p50={resumen.ult24h.p50.valor}
                         />
@@ -495,6 +507,7 @@ export default function DashboardGranulometria() {
                             generatePDF={generatePDF}
                             showDownloadButton={true}
                             monthDropdownRef={monthDropdownRef}
+                            isSelected={customDateSelected}
                         />
                     </div>
 
