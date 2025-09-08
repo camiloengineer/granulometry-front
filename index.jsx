@@ -580,7 +580,7 @@ export default function DashboardGranulometria() {
 
                     <div className="flex items-center gap-2 mb-4">
                         <Gauge className="text-slate-500" size={18} />
-                        <h3 className="text-lg font-semibold text-slate-800">Frecuencia por tamaños</h3>
+                        <h3 className="text-lg font-semibold text-slate-800">Histograma</h3>
                     </div>
 
                     <Card action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>

@@ -1,5 +1,5 @@
-const Card = ({ title, icon, action, children, className = '' }) => (
-    <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 ${className}`}>
+const Card = ({ title, icon, action, children, className = '', onClick }) => (
+    <div className={`bg-white rounded-2xl shadow-sm border border-slate-200 ${className}`} onClick={onClick}>
         <div className="flex items-center justify-between p-5 pb-0">
             <div className="flex items-center gap-2">
                 {icon}
