@@ -41,10 +41,10 @@ export default function DashboardGranulometria() {
     const [selectedMonth, setSelectedMonth] = useState('Seleccionar periodo');
     const [customFromDate, setCustomFromDate] = useState(() => {
         const now = new Date();
-        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-        const day = String(firstDay.getDate()).padStart(2, '0');
-        const month = String(firstDay.getMonth() + 1).padStart(2, '0');
-        const year = firstDay.getFullYear();
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        const day = String(lastMonth.getDate()).padStart(2, '0');
+        const month = String(lastMonth.getMonth() + 1).padStart(2, '0');
+        const year = lastMonth.getFullYear();
         return `${day}/${month}/${year}`;
     });
     const [customToDate, setCustomToDate] = useState(() => {
@@ -54,7 +54,7 @@ export default function DashboardGranulometria() {
         const year = now.getFullYear();
         return `${day}/${month}/${year}`;
     });
-    const [customFromTime, setCustomFromTime] = useState('00:00');
+    const [customFromTime, setCustomFromTime] = useState(new Date().toTimeString().split(' ')[0].substring(0, 5));
     const [customToTime, setCustomToTime] = useState(new Date().toTimeString().split(' ')[0].substring(0, 5));
     const [customShift, setCustomShift] = useState('Todos');
     const [dateRangeError, setDateRangeError] = useState('');
@@ -206,6 +206,10 @@ export default function DashboardGranulometria() {
                 targetLength = 24;
                 labelGenerator = (i) => `Hora ${i + 1}`;
                 break;
+            case '30d':
+                targetLength = 30;
+                labelGenerator = (i) => `Día ${i + 1}`;
+                break;
             default:
                 targetLength = 24;
                 labelGenerator = (i) => `Hora ${i + 1}`;
@@ -250,15 +254,31 @@ export default function DashboardGranulometria() {
 
     // Get current granulometry data based on selected time period
     const getCurrentGranulometryData = () => {
+        if (customDateSelected) {
+            // Use 30d data for custom date selections
+            return asExecTimeline(curvaGranByPeriod['30d'], '30d');
+        }
+
         // Use curvaGranByPeriod data with proper timeline processing
         const baseSeries = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
-        return asExecTimeline(baseSeries, timePeriod);
+        return asExecTimeline(baseSeries, timePeriod || '24h');
     };
 
     // Generate date/time range string based on current period
     const getDateTimeRange = () => {
         const now = new Date();
         let fromDate;
+
+        // For custom date selection, use custom dates if selected
+        if (customDateSelected && customFromDate && customToDate) {
+            const convertToISO = (dateStr) => {
+                const [day, month, year] = dateStr.split('/');
+                return `${year}-${month}-${day}`;
+            };
+            const customFrom = new Date(convertToISO(customFromDate) + (customFromTime ? `T${customFromTime}` : 'T00:00'));
+            const customTo = new Date(convertToISO(customToDate) + (customToTime ? `T${customToTime}` : 'T23:59'));
+            return `${customFrom.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} – ${customTo.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+        }
 
         switch (timePeriod) {
             case '10m':
@@ -458,6 +478,13 @@ export default function DashboardGranulometria() {
                         <div className="flex items-center gap-3">
                             <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria</h2>
                         </div>
+                        <button
+                            onClick={() => generatePDF('30d')}
+                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
+                        >
+                            <Download size={16} />
+                            Descargar Reporte
+                        </button>
                     </div>
 
                     {/* === KPIs / resumen === */}
