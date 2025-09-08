@@ -576,13 +576,14 @@ export default function DashboardGranulometria() {
                                 <LineChart data={currentGranulometryData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="time" />
-                                    <YAxis domain={[0, 55.9]} />
+                                    <YAxis domain={[0, 55.9]} tickFormatter={(v) => `${v} mm`} />
                                     <Legend />
                                     <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                     <Line type="monotone" dataKey="p50" name="P50" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
+                        <AxisCaption yAxisLabel="Tamaño de partícula (mm)" xAxisLabel="Tiempo transcurrido" />
                     </Card>
 
                     <div className="flex items-center gap-2 mb-3">
