@@ -12,7 +12,8 @@
     "deploy": "npm run build && firebase deploy",
     "claude:1": "rm -rf ~/.claude && cp -r ~/claude-profiles/.claude-profile-1 ~/.claude && echo 1 > ~/.claude-current && chmod -R 600 ~/.claude/.credentials*.json 2>/dev/null || true && code -r ~/Escritorio/Projects/reportability_frontend",
     "claude:2": "rm -rf ~/.claude && cp -r ~/claude-profiles/.claude-profile-2 ~/.claude && echo 2 > ~/.claude-current && chmod -R 600 ~/.claude/.credentials*.json 2>/dev/null || true && code -r ~/Escritorio/Projects/reportability_frontend",
-    "claude": "echo -n 'Active account: ' && (cat ~/.claude-current || echo 'desconocida')"
+    "claude": "echo -n 'Active account: ' && (cat ~/.claude-current || echo 'desconocida')",
+    "sync": "cp claude.md .github/copilot-instructions.md"
   },
   "dependencies": {
     "jspdf": "^3.0.1",
@@ -22,9 +23,13 @@
     "recharts": "^2.8.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.35.0",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.14",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
     "postcss": "^8.4.27",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.3.3",
     "vite": "^4.4.5"
   }
