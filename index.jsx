@@ -430,7 +430,7 @@ export default function DashboardGranulometria() {
 
         doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
-        doc.text(`• Fórmula utilizada: ${formulas[selectedFormula].name}`, 25, yPosition);
+        doc.text(`• Fórmula utilizada: Swebrec`, 25, yPosition);
         yPosition += 8;
         doc.text('• Análisis basado en procesamiento de imágenes', 25, yPosition);
         yPosition += 8;
@@ -478,13 +478,22 @@ export default function DashboardGranulometria() {
                         <div className="flex items-center gap-3">
                             <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulometría</h2>
                         </div>
-                        <button
-                            onClick={() => generatePDF('30d')}
-                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
-                        >
-                            <Download size={16} />
-                            Descargar Reporte
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="flex items-center justify-center px-3 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors min-h-[40px]"
+                                title="Actualizar datos"
+                            >
+                                <RefreshCcw size={16} />
+                            </button>
+                            <button
+                                onClick={() => generatePDF('30d')}
+                                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
+                            >
+                                <Download size={16} />
+                                Descargar Reporte
+                            </button>
+                        </div>
                     </div>
 
                     {/* === KPIs / resumen === */}
@@ -544,12 +553,12 @@ export default function DashboardGranulometria() {
 
                     <div className="flex items-center gap-2 mb-3">
                         <TrendingUp className="text-slate-500" size={18} />
-                        <h3 className="text-lg font-semibold text-slate-800">Distribución granulométrica</h3>
+                        <h3 className="text-lg font-semibold text-slate-800">Distribución granulométrica:</h3>
+                        <h3 className="text-md text-slate-700">{getDateTimeRange()}</h3>
                     </div>
 
                     <Card>
                         <div className="flex items-center justify-between mb-2">
-                            <div className="text-xs text-slate-500">{getDateTimeRange()}</div>
                             <div className="relative" ref={distributionTooltipRef}>
                                 <button
                                     onClick={() => setShowDistributionTooltip(!showDistributionTooltip)}
