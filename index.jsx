@@ -227,7 +227,9 @@ export default function DashboardGranulometria() {
 
     // Get current granulometry data based on selected time period
     const getCurrentGranulometryData = () => {
-        return mockGranulometryData[timePeriod] || mockGranulometryData['24h'];
+        // Use curvaGranByPeriod data with proper timeline processing
+        const baseSeries = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
+        return asExecTimeline(baseSeries, timePeriod);
     };
 
     // Generate date/time range string based on current period

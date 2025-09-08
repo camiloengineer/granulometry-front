@@ -162,6 +162,8 @@ const curvaGran_30d = [
 ];
 
 export const curvaGranByPeriod = {
+    '10m': curvaGran_24h,  // Use 24h data as base for 10m processing
+    '6h': curvaGran_24h,   // Use 24h data as base for 6h processing
     '24h': curvaGran_24h,
     '7d': curvaGran_7d,
     '30d': curvaGran_30d
