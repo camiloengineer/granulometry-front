@@ -1,8 +1,8 @@
 import { Clock } from 'lucide-react';
 import Card from './Card.jsx';
 
-const CustomDateCard = ({ 
-    setShowCustomRange, 
+const CustomDateCard = ({
+    setShowCustomRange,
     isSelected = false,
     customFromDate,
     customToDate,
@@ -19,22 +19,19 @@ const CustomDateCard = ({
     };
 
     return (
-        <Card 
-            title="Fecha personalizada" 
+        <Card
+            title={isSelected && customFromDate && customToDate ? formatCustomRange() : "Fecha personalizada"}
             icon={<Clock className="text-slate-500" size={18} />}
             className={`cursor-pointer transition-all duration-200 ${isSelected
                 ? 'bg-blue-50 border-blue-300'
                 : 'hover:bg-blue-50 hover:border-blue-300'
-            }`}
+                }`}
         >
             <div className="space-y-3">
                 {isSelected && customFromDate && customToDate ? (
                     <>
                         <div className="text-xs text-slate-600 text-center">
-                            {formatCustomRange()}
-                        </div>
-                        <div className="text-xs text-slate-600 text-center">
-                            {formatTimeRange()}
+                            Presione para seleccionar otra fecha
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-slate-600">P80</span>
