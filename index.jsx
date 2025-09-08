@@ -762,6 +762,7 @@ export default function DashboardGranulometria() {
                                     <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} tickMargin={6} />
                                     <YAxis
                                         width={40}
+                                        tickFormatter={(v) => `${v}%`}
                                     />
                                     <Tooltip
                                         formatter={(value) => [
