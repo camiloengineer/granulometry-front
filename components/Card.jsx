@@ -1,7 +1,7 @@
 const Card = ({ title, icon, action, children, className = '', onClick }) => {
     const hasHeader = Boolean(title) || Boolean(icon) || Boolean(action);
     return (
-        <div className={`h-full bg-white rounded-2xl shadow-sm border border-slate-200 ${className}`} onClick={onClick}>
+        <div className={`h-full bg-white rounded-2xl shadow-sm border border-slate-200 !mt-2 ${className}`} onClick={onClick}>
             {hasHeader && (
                 <div className="flex items-center justify-between px-5 pt-4 pb-1">
                     <div className="flex items-center gap-2 min-h-[1.75rem]">
