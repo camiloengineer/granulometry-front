@@ -20,6 +20,7 @@ import Badge from './components/Badge.jsx';
 import Card from './components/Card.jsx';
 import AxisCaption from './components/AxisCaption.jsx';
 import CustomDateCard from './components/CustomDateCard.jsx';
+import TimeCard from './components/TimeCard.jsx';
 
 
 
@@ -442,16 +443,6 @@ export default function DashboardGranulometria() {
     };
 
 
-    const getTimePeriodLabel = () => {
-        switch (timePeriod) {
-            case '30d': return 'Últimos 30 días';
-            case '7d': return 'Últimos 7 días';
-            case '24h': return 'Últimas 24 horas';
-            case '6h': return 'Últimas 6 horas';
-            case '10m': return 'Últimos 10 minutos';
-            default: return 'Últimos 10 minutos';
-        }
-    };
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -462,61 +453,40 @@ export default function DashboardGranulometria() {
                     {/* Período activo */}
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria: {getTimePeriodLabel()}</h2>
+                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria</h2>
                             <Badge tone="info">Modo ejecutivo</Badge>
                         </div>
                     </div>
 
                     {/* === KPIs / resumen === */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <Card title="Últimos 10 minutos" icon={<Gauge className="text-slate-500" size={18} />}>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P80</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-blue-600">{kpis.p80Actual.toFixed(2)} mm</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P50</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-purple-600">{kpis.p50Actual.toFixed(2)} mm</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card title="Últimas 6 horas" icon={<Activity className="text-slate-500" size={18} />}>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P80</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-blue-600">{resumen.ult24h.p80.valor} {resumen.ult24h.p80.unidad}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P50</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-purple-600">{resumen.ult24h.p50.valor} {resumen.ult24h.p50.unidad}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                        <Card title="Últimas 24 horas" icon={<Clock className="text-slate-500" size={18} />}>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P80</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-blue-600">{resumen.ult24h.p80.valor} {resumen.ult24h.p80.unidad}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-slate-600">P50</span>
-                                    <div className="text-right">
-                                        <div className="text-lg font-bold text-purple-600">{resumen.ult24h.p50.valor} {resumen.ult24h.p50.unidad}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
+                        <TimeCard
+                            period="10m"
+                            title="Últimos 10 minutos"
+                            icon={<Gauge className="text-slate-500" size={18} />}
+                            isActive={timePeriod === '10m'}
+                            onClick={setTimePeriod}
+                            p80={kpis.p80Actual.toFixed(2)}
+                            p50={kpis.p50Actual.toFixed(2)}
+                        />
+                        <TimeCard
+                            period="6h"
+                            title="Últimas 6 horas"
+                            icon={<Activity className="text-slate-500" size={18} />}
+                            isActive={timePeriod === '6h'}
+                            onClick={setTimePeriod}
+                            p80={resumen.ult24h.p80.valor}
+                            p50={resumen.ult24h.p50.valor}
+                        />
+                        <TimeCard
+                            period="24h"
+                            title="Últimas 24 horas"
+                            icon={<Clock className="text-slate-500" size={18} />}
+                            isActive={timePeriod === '24h'}
+                            onClick={setTimePeriod}
+                            p80={resumen.ult24h.p80.valor}
+                            p50={resumen.ult24h.p50.valor}
+                        />
                         <CustomDateCard
                             selectedMonth={selectedMonth}
                             setSelectedMonth={setSelectedMonth}
