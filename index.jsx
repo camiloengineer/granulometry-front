@@ -476,7 +476,7 @@ export default function DashboardGranulometria() {
                     {/* Período activo */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria</h2>
+                            <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulometría</h2>
                         </div>
                         <button
                             onClick={() => generatePDF('30d')}
@@ -615,6 +615,23 @@ export default function DashboardGranulometria() {
                         </div>
                         <Badge tone="info">Fórmula Swebrec</Badge>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Curva granulométrica */}
+                            <div>
+                                <div className="h-96">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
+                                            <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                                            <Legend />
+                                            <Line type="monotone" dataKey="pct" name="Curva de tamaño de partículas" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
+                                            <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="5 5" label={{ value: "P80", position: "topLeft" }} />
+                                            <ReferenceLine y={50} stroke="#7c3aed" strokeDasharray="5 5" label={{ value: "P50", position: "topLeft" }} />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
                             {/* Tabla Percent Passing */}
                             <div>
                                 <table className="w-full text-sm">
@@ -667,23 +684,6 @@ export default function DashboardGranulometria() {
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-
-                            {/* Curva granulométrica */}
-                            <div>
-                                <div className="h-96">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
-                                            <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
-                                            <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-                                            <Legend />
-                                            <Line type="monotone" dataKey="pct" name="Curva de tamaño de partículas" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
-                                            <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="5 5" label={{ value: "P80", position: "topLeft" }} />
-                                            <ReferenceLine y={50} stroke="#7c3aed" strokeDasharray="5 5" label={{ value: "P50", position: "topLeft" }} />
-                                        </LineChart>
-                                    </ResponsiveContainer>
-                                </div>
                             </div>
                         </div>
                     </Card>
