@@ -8,7 +8,7 @@ const timeConfigs = {
         key: 'ult10min'
     },
     '6h': {
-        title: 'Últimas 6 horas', 
+        title: 'Últimas 6 horas',
         icon: <Clock className="text-slate-500" size={18} />,
         key: 'ult6h'
     },
@@ -29,12 +29,19 @@ const timeConfigs = {
     }
 };
 
-const MetricsCard = ({ period, resumen }) => {
+const MetricsCard = ({ period, resumen, isSelected = false }) => {
     const config = timeConfigs[period];
     const data = resumen[config.key];
-    
+
     return (
-        <Card title={config.title} icon={config.icon}>
+        <Card
+            title={config.title}
+            icon={config.icon}
+            className={`cursor-pointer transition-all duration-200 ${isSelected
+                ? 'border-2 border-blue-500 bg-blue-100'
+                : 'hover:bg-blue-50 hover:border-blue-300'
+            }`}
+        >
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-slate-600">P80</span>
