@@ -15,7 +15,6 @@ import {
     YAxis
 } from 'recharts';
 import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaGranByPeriod } from './mock-data.js';
-import ShiftSelector from './components/ShiftSelector.jsx';
 import Badge from './components/Badge.jsx';
 import Card from './components/Card.jsx';
 import AxisCaption from './components/AxisCaption.jsx';
@@ -61,12 +60,6 @@ export default function DashboardGranulometria() {
     const monthDropdownRef = useRef(null);
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
-
-    // Set default time period
-    useEffect(() => {
-        setTimePeriod('10m');
-    }, []);
-
 
     const handleCustomDateSearch = () => {
         if (!customFromDate || !customToDate) {
@@ -427,11 +420,11 @@ export default function DashboardGranulometria() {
     return (
         <div className="min-h-screen bg-slate-50">
 
-            <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+            <main className="max-w-7xl mx-auto px-6 py-6 space-y-8">
 
                 <>
                     {/* Período activo */}
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria</h2>
                         </div>
@@ -478,13 +471,13 @@ export default function DashboardGranulometria() {
                         />
                     </div>
 
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-3">
                         <TrendingUp className="text-slate-500" size={18} />
                         <h3 className="text-lg font-semibold text-slate-800">Distribución granulométrica</h3>
                     </div>
 
                     <Card>
-                        <div className="text-xs text-slate-500 mb-4">{getDateTimeRange()}</div>
+                        <div className="text-xs text-slate-500 mb-2">{getDateTimeRange()}</div>
                         <div className="h-64">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={currentGranulometryData}>
@@ -499,7 +492,7 @@ export default function DashboardGranulometria() {
                         </div>
                     </Card>
 
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-3">
                         <Beaker className="text-slate-500" size={18} />
                         <h3 className="text-lg font-semibold text-slate-800">Curva granulométrica</h3>
                     </div>
@@ -580,13 +573,13 @@ export default function DashboardGranulometria() {
                         </div>
                     </Card>
 
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-3">
                         <Gauge className="text-slate-500" size={18} />
                         <h3 className="text-lg font-semibold text-slate-800">Histograma</h3>
                     </div>
 
-                    <Card action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
-                        <div className="mb-4 flex gap-2 items-center justify-end">
+                    <Card>
+                        <div className="mb-3 flex gap-2 items-center justify-end">
                             <div className="flex bg-slate-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setBucketSize(5)}
