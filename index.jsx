@@ -508,6 +508,10 @@ export default function DashboardGranulometria() {
                             showDownloadButton={true}
                             monthDropdownRef={monthDropdownRef}
                             isSelected={customDateSelected}
+                            customFromDate={customFromDate}
+                            customToDate={customToDate}
+                            customFromTime={customFromTime}
+                            customToTime={customToTime}
                         />
                     </div>
 
