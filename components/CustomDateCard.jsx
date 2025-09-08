@@ -26,6 +26,7 @@ const CustomDateCard = ({
                 ? 'bg-blue-50 border-blue-300'
                 : 'hover:bg-blue-50 hover:border-blue-300'
                 }`}
+            onClick={isSelected && customFromDate && customToDate ? () => setShowCustomRange(true) : undefined}
         >
             <div className="space-y-3">
                 {isSelected && customFromDate && customToDate ? (
