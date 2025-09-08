@@ -686,6 +686,7 @@ export default function DashboardGranulometria() {
                                 </table>
                             </div>
                         </div>
+                        <AxisCaption yAxisLabel="Porcentaje que pasa (%)" />
                     </Card>
 
                     <div className="flex items-center gap-2 mb-3">
