@@ -26,7 +26,6 @@ import TimeCard from './components/TimeCard.jsx';
 
 
 export default function DashboardGranulometria() {
-    const [activeTab, setActiveTab] = useState('ejecutiva');
     const [currentPage, setCurrentPage] = useState(1);
     const totalSamples = 20;
     const totalPages = totalSamples;
@@ -63,14 +62,10 @@ export default function DashboardGranulometria() {
 
     const estadoP80 = kpis.p80Actual <= kpis.p80Meta + 0.2 ? 'ok' : 'bad';
 
-    // Handle tab change and set default time period per view
+    // Set default time period
     useEffect(() => {
-        if (activeTab === 'ejecutiva') {
-            setTimePeriod('10m');
-        } else if (activeTab === 'tecnica') {
-            setTimePeriod('30d');
-        }
-    }, [activeTab]);
+        setTimePeriod('10m');
+    }, []);
 
 
     const handleCustomDateSearch = () => {
@@ -240,36 +235,19 @@ export default function DashboardGranulometria() {
         const now = new Date();
         let fromDate;
 
-        if (activeTab === 'ejecutiva') {
-            switch (timePeriod) {
-                case '10m':
-                    fromDate = new Date(now.getTime() - 10 * 60 * 1000);
-                    break;
-                case '6h':
-                    fromDate = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-                    break;
-                case '24h':
-                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-                default:
-                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-            }
-        } else {
-            switch (timePeriod) {
-                case '30d':
-                    fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                    break;
-                case '7d':
-                    fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    break;
-                case '24h':
-                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-                default:
-                    fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-            }
+        switch (timePeriod) {
+            case '10m':
+                fromDate = new Date(now.getTime() - 10 * 60 * 1000);
+                break;
+            case '6h':
+                fromDate = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+                break;
+            case '24h':
+                fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
+            default:
+                fromDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
         }
 
         return `${fromDate.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} – ${now.toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
@@ -454,7 +432,6 @@ export default function DashboardGranulometria() {
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                             <h2 className="text-xl lg:text-2xl font-semibold text-slate-800">Monitoreo de granulométria</h2>
-                            <Badge tone="info">Modo ejecutivo</Badge>
                         </div>
                     </div>
 
@@ -606,7 +583,7 @@ export default function DashboardGranulometria() {
                         <h3 className="text-lg font-semibold text-slate-800">Frecuencia por tamaños</h3>
                     </div>
 
-                    <Card action={activeTab === 'ejecutiva' && timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
+                    <Card action={timePeriod === '24h' ? <ShiftSelector selectedShift={shift} onShiftChange={setShift} /> : null}>
                         <div className="mb-4 flex gap-2 items-center justify-end">
                             <div className="flex bg-slate-100 rounded-lg p-1">
                                 <button
