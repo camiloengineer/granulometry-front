@@ -26,7 +26,7 @@ import TimeCard from './components/TimeCard.jsx';
 
 export default function DashboardGranulometria() {
     const [currentPage, setCurrentPage] = useState(1);
-    const totalSamples = 20;
+    const totalSamples = 10;
     const totalPages = totalSamples;
     const [timePeriod, setTimePeriod] = useState('10m');
     const [customDateSelected, setCustomDateSelected] = useState(false);
@@ -188,7 +188,7 @@ export default function DashboardGranulometria() {
     const generateTimeLabels = (period, now = new Date()) => {
         const labels = [];
         let windowMs, stepMs, format;
-        
+
         switch (period) {
             case '10m':
                 windowMs = 10 * 60 * 1000;
@@ -215,31 +215,31 @@ export default function DashboardGranulometria() {
                 stepMs = 60 * 60 * 1000;
                 format = 'HH:mm';
         }
-        
+
         // Floor to appropriate interval
         const floorToMinute = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
         const floorToDay = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        
+
         let end;
         if (format === 'HH:mm') {
             end = floorToMinute(now);
         } else {
             end = floorToDay(now);
         }
-        
+
         const start = new Date(end.getTime() - windowMs);
-        
+
         // Generate labels from start to end
         for (let time = start.getTime(); time <= end.getTime(); time += stepMs) {
             const date = new Date(time);
-            
+
             if (format === 'HH:mm') {
                 labels.push(date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false }));
             } else { // DD MMM
                 labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }).toLowerCase());
             }
         }
-        
+
         return labels;
     };
 
@@ -332,6 +332,16 @@ export default function DashboardGranulometria() {
     };
 
     const currentGranulometryData = getCurrentGranulometryData();
+
+    const getPeriodText = () => {
+        if (customDateSelected) return "Fecha personalizada";
+        switch (timePeriod) {
+            case '10m': return "10 minutos";
+            case '6h': return "6 horas";
+            case '24h': return "24 horas";
+            default: return "24 horas";
+        }
+    };
 
     const generatePDF = (periodo = '30d') => {
         const doc = new jsPDF();
@@ -521,10 +531,10 @@ export default function DashboardGranulometria() {
                             </button>
                             <button
                                 onClick={() => generatePDF('30d')}
-                                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                             >
                                 <Download size={16} />
-                                Descargar Reporte
+                                Descargar reporte: {getPeriodText()}
                             </button>
                         </div>
                     </div>
@@ -638,7 +648,7 @@ export default function DashboardGranulometria() {
 
                     <Card>
                         <div className="flex items-center justify-between mb-2">
-                            <Badge tone="info">Fórmula Swebrec</Badge>
+                            <Badge tone="info">Fórmula Rosin-Rammler</Badge>
                             <div className="relative" ref={curveTooltipRef}>
                                 <button
                                     onClick={() => setShowCurveTooltip(!showCurveTooltip)}
@@ -732,7 +742,7 @@ export default function DashboardGranulometria() {
                                 </table>
                             </div>
                         </div>
-                        <AxisCaption yAxisLabel="Porcentaje que pasa (%)" />
+                        <AxisCaption yAxisLabel="Acumulado (%)" />
                     </Card>
 
                     <div className="flex items-center gap-2 mb-3">
