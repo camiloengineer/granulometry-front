@@ -1,6 +1,6 @@
 const Badge = ({ tone = 'ok', children }) => {
     const map = {
-        ok: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+        ok: 'bg-gray-200 text-gray-700 border-gray-300',
         warn: 'bg-amber-100 text-amber-800 border-amber-200',
         bad: 'bg-rose-100 text-rose-700 border-rose-200',
         info: 'bg-sky-100 text-sky-700 border-sky-200'

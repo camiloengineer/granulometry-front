@@ -707,7 +707,7 @@ export default function DashboardGranulometria() {
                                             <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                             <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                                             <Legend />
-                                            <Line type="monotone" dataKey="pct" name="Curva de tamaño de partículas" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
+                                            <Line type="monotone" dataKey="pct" name="Particle size distribution curve" stroke="#2563eb" strokeWidth={2} dot={{ r: 2 }} />
                                             <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="5 5" label={{ value: "P80", position: "topLeft" }} />
                                             <ReferenceLine y={50} stroke="#7c3aed" strokeDasharray="5 5" label={{ value: "P50", position: "topLeft" }} />
                                         </LineChart>
@@ -860,15 +860,22 @@ export default function DashboardGranulometria() {
                                             fontSize: '12px'
                                         }}
                                     />
-                                    <Legend />
+                                    {/* <Legend /> */}
                                     <Bar dataKey="frequency" name="Frecuencia (%)" stroke="transparent" strokeWidth={0} radius={[4, 4, 0, 0]}>
                                         {histogramData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.size > 60 ? "#e5e6eb" : "#3b82f6"} />
+                                            <Cell key={`cell-${index}`} fill={entry.size > 60 ? "#6d6d6d" : "#3b82f6"} />
                                         ))}
                                     </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
+
+                        {/* Top 10% indicator */}
+                        <div className="flex justify-end items-center gap-2 px-1 mt-2">
+                            <div className="w-3 h-3 bg-[#6d6d6d] rounded-sm"></div>
+                            <span className="text-xs text-slate-600">top 10%: 72.15mm - 79.83mm</span>
+                        </div>
+
                         <AxisCaption yAxisLabel="Frecuencia (%)" />
                     </Card>
 
