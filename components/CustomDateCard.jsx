@@ -1,6 +1,5 @@
 import { Clock } from 'lucide-react';
 import Card from './Card.jsx';
-import Badge from './Badge.jsx';
 
 const CustomDateCard = ({
     setShowCustomRange,
@@ -27,16 +26,16 @@ const CustomDateCard = ({
                 ? '!bg-blue-50 !border-blue-300'
                 : 'hover:bg-blue-50 hover:border-blue-300'
                 }`}
-            onClick={isSelected && customFromDate && customToDate ? () => setShowCustomRange(true) : undefined}
+            onClick={() => setShowCustomRange(true)}
         >
             <div className="space-y-3">
                 {isSelected && customFromDate && customToDate ? (
                     <>
-                        <div className="flex justify-start mb-2">
-                            <Badge tone="ok">top 10%: 74.20mm - 78.45mm</Badge>
-                        </div>
-                        <div className="text-xs text-slate-600 mb-2">
-                            Seleccionar
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-slate-600">Top 10%</span>
+                            <div className="text-right">
+                                <div className="text-lg font-bold text-gray-700">74.20mm - 78.45mm</div>
+                            </div>
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-slate-600">P80</span>
