@@ -601,7 +601,8 @@ export default function DashboardGranulometria() {
                     </div>
 
                     <Card>
-                        <div className="flex items-center justify-end mb-2">
+                        <div className="flex items-center justify-between mb-2">
+                            <Badge tone="info">Fórmula Swebrec</Badge>
                             <div className="relative" ref={curveTooltipRef}>
                                 <button
                                     onClick={() => setShowCurveTooltip(!showCurveTooltip)}
@@ -623,7 +624,6 @@ export default function DashboardGranulometria() {
                                 )}
                             </div>
                         </div>
-                        <Badge tone="info">Fórmula Swebrec</Badge>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Curva granulométrica */}
                             <div>
