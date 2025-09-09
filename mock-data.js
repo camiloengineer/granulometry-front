@@ -218,11 +218,11 @@ const histogramFreq_30d = [
     { size: 44.45, freq: 6.2 },
     { size: 46.99, freq: 5.1 },
     { size: 50.80, freq: 4.2 },
-    { size: 54.61, freq: 3.5 },
-    { size: 58.42, freq: 2.9 },
-    { size: 63.50, freq: 2.4 },
-    { size: 69.85, freq: 2.0 },
-    { size: 76.20, freq: 1.7 }
+    { size: 54.61, freq: 2.1 },
+    { size: 58.42, freq: 1.6 },
+    { size: 63.50, freq: 1.2 },
+    { size: 69.85, freq: 0.9 },
+    { size: 76.20, freq: 0.7 }
 ];
 
 // Histogram frequency data for other time periods
@@ -252,11 +252,11 @@ const histogramFreq_10m = [
     { size: 44.45, freq: 7.5 },
     { size: 46.99, freq: 6.4 },
     { size: 50.80, freq: 5.3 },
-    { size: 54.61, freq: 4.5 },
-    { size: 58.42, freq: 3.8 },
-    { size: 63.50, freq: 3.2 },
-    { size: 69.85, freq: 2.7 },
-    { size: 76.20, freq: 2.3 }
+    { size: 54.61, freq: 2.4 },
+    { size: 58.42, freq: 1.8 },
+    { size: 63.50, freq: 1.3 },
+    { size: 69.85, freq: 1.0 },
+    { size: 76.20, freq: 0.8 }
 ];
 
 const histogramFreq_6h = [
@@ -285,11 +285,11 @@ const histogramFreq_6h = [
     { size: 44.45, freq: 7.1 },
     { size: 46.99, freq: 6.0 },
     { size: 50.80, freq: 5.1 },
-    { size: 54.61, freq: 4.3 },
-    { size: 58.42, freq: 3.6 },
-    { size: 63.50, freq: 3.0 },
-    { size: 69.85, freq: 2.5 },
-    { size: 76.20, freq: 2.1 }
+    { size: 54.61, freq: 2.3 },
+    { size: 58.42, freq: 1.7 },
+    { size: 63.50, freq: 1.3 },
+    { size: 69.85, freq: 1.0 },
+    { size: 76.20, freq: 0.8 }
 ];
 
 const histogramFreq_24h = [
@@ -318,11 +318,11 @@ const histogramFreq_24h = [
     { size: 44.45, freq: 6.2 },
     { size: 46.99, freq: 5.1 },
     { size: 50.80, freq: 4.2 },
-    { size: 54.61, freq: 3.5 },
-    { size: 58.42, freq: 2.9 },
-    { size: 63.50, freq: 2.4 },
-    { size: 69.85, freq: 2.0 },
-    { size: 76.20, freq: 1.7 }
+    { size: 54.61, freq: 2.1 },
+    { size: 58.42, freq: 1.6 },
+    { size: 63.50, freq: 1.2 },
+    { size: 69.85, freq: 0.9 },
+    { size: 76.20, freq: 0.7 }
 ];
 
 
