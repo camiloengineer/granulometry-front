@@ -184,36 +184,69 @@ export default function DashboardGranulometria() {
     const histCurve = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
     const histogramData = generateHistogramData(histCurve, bucketSize, false);
 
-    // Generate timeline labels for Ejecutiva based on period
-    const asExecTimeline = (series, period) => {
-        let targetLength, labelGenerator;
-
+    // Helper function to generate time labels anchored to now
+    const generateTimeLabels = (period, now = new Date()) => {
+        const labels = [];
+        let windowMs, stepMs, format;
+        
         switch (period) {
             case '10m':
-                targetLength = 10; // Keep 10 points for line visibility
-                labelGenerator = (i) => `Min ${i + 1}`;
+                windowMs = 10 * 60 * 1000;
+                stepMs = 60 * 1000; // 1 min
+                format = 'HH:mm';
                 break;
             case '6h':
-                targetLength = 36; // 6h * 6 points per hour (every 10 min)
-                labelGenerator = (i) => {
-                    const totalMinutes = i * 10;
-                    const hours = Math.floor(totalMinutes / 60);
-                    const minutes = totalMinutes % 60;
-                    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-                };
+                windowMs = 6 * 60 * 60 * 1000;
+                stepMs = 30 * 60 * 1000; // 30 min
+                format = 'HH:mm';
                 break;
             case '24h':
-                targetLength = 24;
-                labelGenerator = (i) => `Hora ${i + 1}`;
+                windowMs = 7 * 24 * 60 * 60 * 1000; // 7 días según requerimiento
+                stepMs = 24 * 60 * 60 * 1000; // 1 día
+                format = 'DD MMM';
                 break;
             case '30d':
-                targetLength = 30;
-                labelGenerator = (i) => `Día ${i + 1}`;
+                windowMs = 30 * 24 * 60 * 60 * 1000;
+                stepMs = 2 * 24 * 60 * 60 * 1000; // 2 días
+                format = 'DD MMM';
                 break;
             default:
-                targetLength = 24;
-                labelGenerator = (i) => `Hora ${i + 1}`;
+                windowMs = 24 * 60 * 60 * 1000;
+                stepMs = 60 * 60 * 1000;
+                format = 'HH:mm';
         }
+        
+        // Floor to appropriate interval
+        const floorToMinute = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes());
+        const floorToDay = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        let end;
+        if (format === 'HH:mm') {
+            end = floorToMinute(now);
+        } else {
+            end = floorToDay(now);
+        }
+        
+        const start = new Date(end.getTime() - windowMs);
+        
+        // Generate labels from start to end
+        for (let time = start.getTime(); time <= end.getTime(); time += stepMs) {
+            const date = new Date(time);
+            
+            if (format === 'HH:mm') {
+                labels.push(date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false }));
+            } else { // DD MMM
+                labels.push(date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }).toLowerCase());
+            }
+        }
+        
+        return labels;
+    };
+
+    // Generate timeline labels for Ejecutiva based on period
+    const asExecTimeline = (series, period) => {
+        const timeLabels = generateTimeLabels(period);
+        const targetLength = timeLabels.length;
 
         // Normalize series to target length
         const normalizedSeries = [];
@@ -231,7 +264,7 @@ export default function DashboardGranulometria() {
 
             for (let i = 0; i < targetLength; i++) {
                 normalizedSeries.push({
-                    time: labelGenerator(i),
+                    time: timeLabels[i],
                     p80: i < 4 ? p80Baseline : p80Detection, // Break at minute 5 (index 4)
                     p50: i < 4 ? p50Baseline : p50Detection
                 });
@@ -242,7 +275,7 @@ export default function DashboardGranulometria() {
                 const item = series[Math.min(sourceIndex, sourceLength - 1)];
 
                 normalizedSeries.push({
-                    time: labelGenerator(i),
+                    time: timeLabels[i],
                     p80: item.pct * 0.8,
                     p50: item.pct * 0.5
                 });
