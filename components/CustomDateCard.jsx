@@ -23,7 +23,7 @@ const CustomDateCard = ({
             title={isSelected && customFromDate && customToDate ? formatCustomRange() : "Fecha personalizada"}
             icon={<Clock className="text-slate-500" size={18} />}
             className={`cursor-pointer transition-all duration-200 ${isSelected
-                ? 'bg-blue-50 border-blue-300'
+                ? 'bg-[hsl(214_100%_97%)] border-[hsl(212_96%_78%)]'
                 : 'hover:bg-blue-50 hover:border-blue-300'
                 }`}
             onClick={isSelected && customFromDate && customToDate ? () => setShowCustomRange(true) : undefined}
@@ -51,7 +51,7 @@ const CustomDateCard = ({
                     <div className="flex items-center justify-center">
                         <button
                             onClick={() => setShowCustomRange(true)}
-                            className="px-4 mt-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+                            className="px-4 py-2 mt-6 bg-white border border-slate-300 text-slate-800 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium"
                         >
                             Seleccionar Fecha
                         </button>
