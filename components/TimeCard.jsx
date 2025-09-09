@@ -1,13 +1,13 @@
 import Card from './Card.jsx';
 import Badge from './Badge.jsx';
 
-const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50, top }) => (
+const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50 }) => (
     <Card
         title={title}
         icon={icon}
-        action={<Badge tone="info">Top: {top}mm</Badge>}
+        action={<Badge tone="info">top 10%: 255mm - 301mm</Badge>}
         className={`cursor-pointer transition-all duration-200 border ${isActive
-            ? 'bg-blue-50 border-blue-300'
+            ? '!bg-blue-50 !border-blue-300'
             : 'hover:bg-blue-50 hover:border-blue-300'
             }`}
         onClick={() => onClick(period)}
