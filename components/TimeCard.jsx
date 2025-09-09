@@ -13,7 +13,7 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50 }) => (
     >
         <div className="space-y-3">
             <div className="flex justify-start">
-                <Badge tone="info">top 10%: 247.83mm - 312.47mm</Badge>
+                <Badge tone="info">top 10%: 72.15mm - 79.83mm</Badge>
             </div>
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-600">P80</span>
