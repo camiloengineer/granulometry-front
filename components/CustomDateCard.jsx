@@ -34,7 +34,7 @@ const CustomDateCard = ({
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-slate-600">Top 10%</span>
                             <div className="text-right">
-                                <div className="text-lg font-bold text-gray-700">74.20mm - 78.45mm</div>
+                                <div className="text-lg font-bold text-yellow-700">74.20mm - 78.45mm</div>
                             </div>
                         </div>
                         <div className="flex items-center justify-between">

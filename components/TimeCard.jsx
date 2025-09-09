@@ -14,7 +14,7 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50 }) => (
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-600">Top 10%</span>
                 <div className="text-right">
-                    <div className="text-lg font-bold text-gray-700">72.15mm - 79.83mm</div>
+                    <div className="text-lg font-bold text-yellow-700">72.15mm - 79.83mm</div>
                 </div>
             </div>
             <div className="flex items-center justify-between">
