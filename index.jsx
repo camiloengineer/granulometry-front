@@ -558,7 +558,7 @@ export default function DashboardGranulometria() {
                     </div>
 
                     <Card>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-end mb-2">
                             <div className="relative" ref={distributionTooltipRef}>
                                 <button
                                     onClick={() => setShowDistributionTooltip(!showDistributionTooltip)}
