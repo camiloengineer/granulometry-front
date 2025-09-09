@@ -500,7 +500,7 @@ export default function DashboardGranulometria() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <TimeCard
                             period="10m"
-                            title="Últimos 10 minutos"
+                            title="10 minutos"
                             icon={<Gauge className="text-slate-500" size={18} />}
                             isActive={timePeriod === '10m'}
                             onClick={(period) => {
@@ -509,10 +509,11 @@ export default function DashboardGranulometria() {
                             }}
                             p80={kpis.p80Actual.toFixed(2)}
                             p50={kpis.p50Actual.toFixed(2)}
+                            top="85"
                         />
                         <TimeCard
                             period="6h"
-                            title="Últimas 6 horas"
+                            title="6 horas"
                             icon={<Activity className="text-slate-500" size={18} />}
                             isActive={timePeriod === '6h'}
                             onClick={(period) => {
@@ -521,10 +522,11 @@ export default function DashboardGranulometria() {
                             }}
                             p80={resumen.ult24h.p80.valor}
                             p50={resumen.ult24h.p50.valor}
+                            top="78"
                         />
                         <TimeCard
                             period="24h"
-                            title="Últimas 24 horas"
+                            title="24 horas"
                             icon={<Clock className="text-slate-500" size={18} />}
                             isActive={timePeriod === '24h'}
                             onClick={(period) => {
@@ -533,6 +535,7 @@ export default function DashboardGranulometria() {
                             }}
                             p80={resumen.ult24h.p80.valor}
                             p50={resumen.ult24h.p50.valor}
+                            top="82"
                         />
                         <CustomDateCard
                             selectedMonth={selectedMonth}
