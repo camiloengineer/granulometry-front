@@ -5,7 +5,7 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50, top }) => 
     <Card
         title={title}
         icon={icon}
-        action={<Badge tone="info">top: {top}mm</Badge>}
+        action={<Badge tone="info">Top: {top}mm</Badge>}
         className={`cursor-pointer transition-all duration-200 ${isActive
             ? 'bg-[hsl(214_100%_97%)] border-[hsl(212_96%_78%)]'
             : 'hover:bg-blue-50 hover:border-blue-300'
