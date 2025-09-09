@@ -280,7 +280,7 @@ export default function DashboardGranulometria() {
         const sourceLength = series.length;
 
         if (period === '10m') {
-            // For 10m period, create a line break at minute 5 showing single detection
+            // For 10m period, create multiple detection hits for visual effect
             const centralItem = series[Math.floor(sourceLength / 2)];
             const p80Detection = centralItem.pct * 0.8;
             const p50Detection = centralItem.pct * 0.5;
@@ -290,10 +290,12 @@ export default function DashboardGranulometria() {
             const p50Baseline = p50Detection * 0.85;
 
             for (let i = 0; i < targetLength; i++) {
+                // Create random detection hits throughout the timeline (20 hits effect)
+                const hasDetection = Math.random() > 0.2; // 80% chance of detection per point
                 normalizedSeries.push({
                     time: timeLabels[i],
-                    p80: i < 4 ? p80Baseline : p80Detection, // Break at minute 5 (index 4)
-                    p50: i < 4 ? p50Baseline : p50Detection
+                    p80: hasDetection ? p80Detection + (Math.random() - 0.5) * 2 : p80Baseline,
+                    p50: hasDetection ? p50Detection + (Math.random() - 0.5) * 1.5 : p50Baseline
                 });
             }
         } else {
@@ -658,7 +660,7 @@ export default function DashboardGranulometria() {
                                 <LineChart data={currentGranulometryData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="time" />
-                                    <YAxis domain={[0, 55.9]} tickFormatter={(v) => `${v} mm`} />
+                                    <YAxis domain={[0, 55.9]} tickFormatter={(v) => `${Math.round(v)} mm`} />
                                     <Legend />
                                     <Line type="monotone" dataKey="p80" name="P80" stroke="#2563eb" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                     <Line type="monotone" dataKey="p50" name="P50" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
