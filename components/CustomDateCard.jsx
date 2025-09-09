@@ -34,7 +34,7 @@ const CustomDateCard = ({
                     <>
                         <div className="flex items-center justify-between mb-2">
                             <div className="text-xs text-slate-600">
-                                Elegir fecha
+                                Seleccione una nueva fecha
                             </div>
                             <Badge tone="info">Top: 88mm</Badge>
                         </div>
