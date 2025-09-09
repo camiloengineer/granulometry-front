@@ -5,7 +5,6 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50 }) => (
     <Card
         title={title}
         icon={icon}
-        action={<Badge tone="info">top 10%: 255mm - 301mm</Badge>}
         className={`cursor-pointer transition-all duration-200 border ${isActive
             ? '!bg-blue-50 !border-blue-300'
             : 'hover:bg-blue-50 hover:border-blue-300'
@@ -13,6 +12,9 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50 }) => (
         onClick={() => onClick(period)}
     >
         <div className="space-y-3">
+            <div className="flex justify-end">
+                <Badge tone="info">top 10%: 255mm - 301mm</Badge>
+            </div>
             <div className="flex items-center justify-between">
                 <span className="text-sm text-slate-600">P80</span>
                 <div className="text-right">

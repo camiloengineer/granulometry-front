@@ -32,11 +32,11 @@ const CustomDateCard = ({
             <div className="space-y-3">
                 {isSelected && customFromDate && customToDate ? (
                     <>
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="text-xs text-slate-600">
-                                Seleccionar
-                            </div>
+                        <div className="flex justify-end mb-2">
                             <Badge tone="info">top 10%: 255mm - 301mm</Badge>
+                        </div>
+                        <div className="text-xs text-slate-600 mb-2">
+                            Seleccionar
                         </div>
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-slate-600">P80</span>
