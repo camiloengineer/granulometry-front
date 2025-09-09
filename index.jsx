@@ -14,7 +14,7 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
-import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaGranByPeriod } from './mock-data.js';
+import { resumen, kpis, curvaGran, ultimasMuestras, mockGranulometryData, curvaGranByPeriod, histogramFreqByPeriod } from './mock-data.js';
 import Badge from './components/Badge.jsx';
 import Card from './components/Card.jsx';
 import AxisCaption from './components/AxisCaption.jsx';
@@ -117,7 +117,7 @@ export default function DashboardGranulometria() {
         setDateRangeError('');
         setShowCustomRange(false);
         setCustomDateSelected(true);
-        setTimePeriod('');
+        setTimePeriod('30d');
     };
 
     const handleDownloadCustomReport = () => {
@@ -128,52 +128,78 @@ export default function DashboardGranulometria() {
         const maxSize = 76.20;
         const bucketWidth = maxSize / buckets;
 
-        // alien: ensure curve is monotonic non-decreasing in pct before interpolation
+        // Check if curve has freq field (histogram data) or pct field (cumulative data)
+        const isFrequencyData = curve[0] && curve[0].freq !== undefined;
+
+        if (isFrequencyData) {
+            // Direct frequency data - interpolate and bucket
+            const sortedData = [...curve].sort((a, b) => a.size - b.size);
+
+            const interpolateFrequency = (targetSize) => {
+                for (let i = 0; i < sortedData.length - 1; i++) {
+                    const point1 = sortedData[i];
+                    const point2 = sortedData[i + 1];
+
+                    if (targetSize >= point1.size && targetSize <= point2.size) {
+                        const t = (targetSize - point1.size) / (point2.size - point1.size);
+                        return point1.freq + t * (point2.freq - point1.freq);
+                    }
+                }
+
+                if (targetSize <= sortedData[0].size) return sortedData[0].freq;
+                if (targetSize >= sortedData[sortedData.length - 1].size) return sortedData[sortedData.length - 1].freq;
+                return 0;
+            };
+
+            const histogramData = [];
+            for (let i = 0; i < buckets; i++) {
+                const bucketCenter = (i + 0.5) * bucketWidth;
+                const frequency = interpolateFrequency(bucketCenter);
+
+                histogramData.push({
+                    size: bucketCenter,
+                    frequency: frequency,
+                    range: `${(i * bucketWidth).toFixed(2)}-${((i + 1) * bucketWidth).toFixed(2)}`
+                });
+            }
+            return histogramData;
+        }
+
+        // Original cumulative data processing
         const sortedCurvaGran = [...curve].sort((a, b) => a.size - b.size);
         for (let i = 1; i < sortedCurvaGran.length; i++) {
             sortedCurvaGran[i].pct = Math.max(sortedCurvaGran[i].pct, sortedCurvaGran[i - 1].pct);
         }
 
-        // Function to interpolate % passing at a given size using linear interpolation
         const interpolatePercentPassing = (targetSize) => {
-            // Find the two points in sortedCurvaGran that bracket targetSize
             for (let i = 0; i < sortedCurvaGran.length - 1; i++) {
                 const point1 = sortedCurvaGran[i];
                 const point2 = sortedCurvaGran[i + 1];
 
                 if (targetSize >= point1.size && targetSize <= point2.size) {
-                    // Linear interpolation
                     const t = (targetSize - point1.size) / (point2.size - point1.size);
                     return point1.pct + t * (point2.pct - point1.pct);
                 }
             }
 
-            // If targetSize is outside the range, return boundary values
             if (targetSize <= sortedCurvaGran[0].size) return sortedCurvaGran[0].pct;
             if (targetSize >= sortedCurvaGran[sortedCurvaGran.length - 1].size) return sortedCurvaGran[sortedCurvaGran.length - 1].pct;
-
             return 0;
         };
 
         const histogramData = [];
-
         for (let i = 0; i < buckets; i++) {
             const bucketStart = i * bucketWidth;
             const bucketEnd = (i + 1) * bucketWidth;
             const bucketCenter = bucketStart + bucketWidth / 2;
 
-            // Get % passing at start and end of bin
             const pctStart = interpolatePercentPassing(bucketStart);
             const pctEnd = interpolatePercentPassing(bucketEnd);
-
-            // alien: removed Math.abs for correct calculation
             const diffPct = pctEnd - pctStart;
-            // Frecuencia: en porcentaje del 0–100
-            const frequency = diffPct;
 
             histogramData.push({
                 size: bucketCenter,
-                frequency: frequency,
+                frequency: diffPct,
                 range: `${bucketStart.toFixed(2)}-${bucketEnd.toFixed(2)}`
             });
         }
@@ -181,7 +207,7 @@ export default function DashboardGranulometria() {
         return histogramData;
     };
 
-    const histCurve = curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
+    const histCurve = histogramFreqByPeriod[timePeriod] || curvaGranByPeriod[timePeriod] || curvaGranByPeriod['24h'];
     const histogramData = generateHistogramData(histCurve, bucketSize, false);
 
     // Helper function to generate time labels anchored to now
@@ -675,7 +701,7 @@ export default function DashboardGranulometria() {
                             <div>
                                 <div className="h-96">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
+                                        <LineChart data={curvaGranByPeriod[timePeriod] || curvaGran} margin={{ top: 10, right: 20, bottom: 10, left: 0 }}>
                                             <CartesianGrid strokeDasharray="3 3" />
                                             <XAxis dataKey="size" type="number" domain={[0, 76.2]} tickFormatter={(v) => `${v.toFixed(1)} mm`} />
                                             <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
