@@ -865,7 +865,7 @@ export default function DashboardGranulometria() {
                                     {/* <Legend /> */}
                                     <Bar dataKey="frequency" name="Frecuencia (%)" stroke="transparent" strokeWidth={0} radius={[4, 4, 0, 0]}>
                                         {histogramData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.size > 60 ? "#6d6d6d" : "#3b82f6"} />
+                                            <Cell key={`cell-${index}`} fill={entry.size > 60 ? "#fff700" : "#3b82f6"} />
                                         ))}
                                     </Bar>
                                 </BarChart>
@@ -874,11 +874,11 @@ export default function DashboardGranulometria() {
 
                         {/* Top 10% indicator */}
                         <div className="flex justify-end items-center gap-2 px-1 mt-2">
-                            <div className="w-3 h-3 bg-[#6d6d6d] rounded-sm"></div>
-                            <span className="text-xs text-slate-600">top 10%: 72.15mm - 79.83mm</span>
+                            <div className="w-3 h-3 bg-[#fff700] rounded-sm"></div>
+                            <span className="text-sm text-slate-600">top 10%: 72.15mm - 79.83mm</span>
                         </div>
 
-                        <AxisCaption yAxisLabel="Frecuencia (%)" />
+                        <AxisCaption yAxisLabel="Frecuencia Acomulativa(%)" />
                     </Card>
 
                     <div className="flex items-center gap-2 mb-4">
