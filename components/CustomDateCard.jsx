@@ -33,7 +33,7 @@ const CustomDateCard = ({
                 {isSelected && customFromDate && customToDate ? (
                     <>
                         <div className="flex justify-start mb-2">
-                            <Badge tone="info">top 10%: 255mm - 301mm</Badge>
+                            <Badge tone="info">top 10%: 268.29mm - 335.61mm</Badge>
                         </div>
                         <div className="text-xs text-slate-600 mb-2">
                             Seleccionar
