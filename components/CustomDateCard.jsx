@@ -23,8 +23,8 @@ const CustomDateCard = ({
         <Card
             title={isSelected && customFromDate && customToDate ? formatCustomRange() : "Fecha personalizada"}
             icon={<Clock className="text-slate-500" size={18} />}
-            className={`cursor-pointer transition-all duration-200 ${isSelected
-                ? 'bg-[hsl(214_100%_97%)] border-[hsl(212_96%_78%)]'
+            className={`cursor-pointer transition-all duration-200 border ${isSelected
+                ? 'bg-blue-50 border-blue-300'
                 : 'hover:bg-blue-50 hover:border-blue-300'
                 }`}
             onClick={isSelected && customFromDate && customToDate ? () => setShowCustomRange(true) : undefined}

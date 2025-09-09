@@ -6,8 +6,8 @@ const TimeCard = ({ period, title, icon, isActive, onClick, p80, p50, top }) => 
         title={title}
         icon={icon}
         action={<Badge tone="info">Top: {top}mm</Badge>}
-        className={`cursor-pointer transition-all duration-200 ${isActive
-            ? 'bg-[hsl(214_100%_97%)] border-[hsl(212_96%_78%)]'
+        className={`cursor-pointer transition-all duration-200 border ${isActive
+            ? 'bg-blue-50 border-blue-300'
             : 'hover:bg-blue-50 hover:border-blue-300'
             }`}
         onClick={() => onClick(period)}
