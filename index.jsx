@@ -5,6 +5,7 @@ import {
     Bar,
     BarChart,
     CartesianGrid,
+    Cell,
     Legend,
     Line,
     LineChart,
@@ -860,7 +861,11 @@ export default function DashboardGranulometria() {
                                         }}
                                     />
                                     <Legend />
-                                    <Bar dataKey="frequency" name="Frecuencia (%)" fill="#3b82f6" stroke="transparent" strokeWidth={0} radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="frequency" name="Frecuencia (%)" stroke="transparent" strokeWidth={0} radius={[4, 4, 0, 0]}>
+                                        {histogramData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.size > 60 ? "#e5e6eb" : "#3b82f6"} />
+                                        ))}
+                                    </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
